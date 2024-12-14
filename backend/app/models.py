@@ -24,31 +24,21 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-    # Method to create a default "root" folder if it doesn't exist
-    def create_default_folder(self):
-        # Check if the user already has a root folder (this might be redundant, but it's safe to check)
-        existing_folder = Folder.query.filter_by(
-            user_id=self.id, parent_id=None).first()
-
-        if existing_folder:
-            return  # Root folder already exists, no need to create another one
-
-        # Create the root folder
-        root_folder = Folder(name='Root', user_id=self.id, parent_id=None)
-        db.session.add(root_folder)
-        db.session.commit()
-
     def create_document(self, document):
         # Check if a document with the same title already exists for this user
         existing_document = Document.query.filter_by(
             title=document.title, user_id=self.id).first()
 
         if existing_document:
-            raise ValueError("A document with this title already exists in this folder.")
+            raise ValueError(
+                "A document with this title already exists in this folder.")
 
         # If no duplicates, add the document
         db.session.add(document)
         db.session.commit()
+
+    def create_folder(self, folder):
+        pass
 
 
 # Document model for storing rich text documents (HTML content)

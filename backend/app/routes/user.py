@@ -16,12 +16,10 @@ def register():
     if User.query.filter_by(username=username).first():
         return jsonify({"msg": "Username already exists"}), 400
     user = User(username=username, email=email)
-    print("user id", user.id)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
-    
-    user.create_default_folder()
+
     return jsonify({"msg": "User created"}), 201
 
 

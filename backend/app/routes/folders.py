@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from app import db
 from app.models import Folder
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models import Document
+from app.models import Document, User
 
 
 folders_bp = Blueprint('folders', __name__)
@@ -14,10 +14,16 @@ def create_folder():
     current_user_id = get_jwt_identity()
     current_user_id = int(current_user_id)
 
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
     # Get folder data from request
     data = request.get_json()
     folder_name = data.get('name')
-    parent_id = data.get('parent_id', None)  # default to None for root folder
+    # default to None for root folder
+    parent_id = data.get('parent_id', None)
 
     if not folder_name:
         return jsonify({"message": "Folder name is required"}), 400
@@ -48,6 +54,11 @@ def get_folder_contents(folder_id):
     current_user_id = get_jwt_identity()
     current_user_id = int(current_user_id)
 
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
     # Get folder by ID and check if it's the user's folder
     folder = Folder.query.filter_by(
         id=folder_id, user_id=current_user_id).first()
@@ -73,6 +84,11 @@ def get_root_folder_contents():
     current_user_id = get_jwt_identity()
     current_user_id = int(current_user_id)
 
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
     # Fetch the root folder for the user
     root_folder = Folder.query.filter_by(
         user_id=current_user_id, parent_id=None).first()
@@ -82,9 +98,9 @@ def get_root_folder_contents():
 
     # Get all documents and subfolders inside the root folder
     folders = Folder.query.filter_by(
-        user_id=current_user_id, parent_id=root_folder.id).all()
+        user_id=current_user_id, parent_id=None).all()
     documents = Document.query.filter_by(
-        user_id=current_user_id, folder_id=root_folder.id).all()
+        user_id=current_user_id, folder_id=None).all()
 
     return jsonify({
         "folders": [folder.name for folder in folders],

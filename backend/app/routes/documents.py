@@ -92,3 +92,21 @@ def update_document(id):
     document.content = data.get('content', document.content)
     db.session.commit()
     return jsonify({"msg": "Document updated successfully"}), 200
+
+
+@documents_bp.route("/<int:id>", methods=["DELETE"])
+@jwt_required()
+def delete_document(id):
+    current_user_id = get_jwt_identity()
+    current_user_id = int(current_user_id)
+
+    user = User.query.get(current_user_id)
+    document = Document.query.get(id)
+    if not document:
+        return jsonify({"msg": "Document not found"}), 404
+    if document.user_id != user.id:
+        return jsonify({"msg": "You do not have permission to delete this document"}), 403
+
+    db.session.delete(document)
+    db.session.commit()
+    return jsonify({"msg": "Document deleted successfully"}), 200
