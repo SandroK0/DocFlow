@@ -89,20 +89,13 @@ def get_root_folder_contents():
     if not user:
         return jsonify({"msg": "User not found"}), 404
 
-    # Fetch the root folder for the user
-    root_folder = Folder.query.filter_by(
-        user_id=current_user_id, parent_id=None).first()
-
-    if not root_folder:
-        return jsonify({"message": "Root folder not found"}), 404
-
     # Get all documents and subfolders inside the root folder
     folders = Folder.query.filter_by(
         user_id=current_user_id, parent_id=None).all()
     documents = Document.query.filter_by(
         user_id=current_user_id, folder_id=None).all()
-
+    print("test")
     return jsonify({
-        "folders": [folder.name for folder in folders],
+        "folders": [{"id": folder.id, "name": folder.name} for folder in folders],
         "documents": [{"id": doc.id, "title": doc.title} for doc in documents]
     })

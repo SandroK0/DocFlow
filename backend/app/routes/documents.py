@@ -69,7 +69,8 @@ def get_document(id):
         "title": document.title,
         "content": document.content,
         "created_at": document.created_at,
-        "updated_at": document.updated_at
+        "updated_at": document.updated_at,
+        "folder_id": document.folder_id
     }), 200
 
 

@@ -30,8 +30,7 @@ export default function ApiTesting() {
   function handleLogout() {
     localStorage.removeItem("jwt");
     setAccessToken(null);
-  }
-  3;
+  };
 
   function handleCreateDocument() {
     axios

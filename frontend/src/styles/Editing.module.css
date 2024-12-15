@@ -1,0 +1,17 @@
+.Editing {
+    height: 100vh;
+
+}
+
+.header {
+    display: flex;
+    padding: 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Editing main {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}

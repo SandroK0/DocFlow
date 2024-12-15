@@ -1,0 +1,26 @@
+.container {
+  width: 800px;
+  height: 500px;
+  border: 1px solid #ccc;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px;
+}
+
+.item {
+  width: 100%;
+  background-color: #ededed;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.item:hover {
+    opacity: 0.8;
+}
