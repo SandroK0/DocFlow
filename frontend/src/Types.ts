@@ -1,13 +1,3 @@
-// content: "<p>Hello, World!</p>"
-// ​
-// created_at: "Sat, 14 Dec 2024 19:46:16 GMT"
-// ​
-// id: 15
-// ​
-// title: "test_title"
-// ​
-// updated_at: "Sat, 14 Dec 2024 19:46:16 GMT"
-
 export interface Document {
   id: number;
   content: string;
@@ -17,4 +7,7 @@ export interface Document {
   folder_id: number | null;
 }
 
-export interface Folder {}
+export interface Folder {
+  id: number;
+  name: string;
+}

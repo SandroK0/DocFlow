@@ -35,6 +35,13 @@ def create_folder():
         user_id=current_user_id
     )
 
+    existing_folder = Folder.query.filter_by(
+        name=new_folder.name, user_id=user.id, parent_id=new_folder.parent_id).first()
+
+    if existing_folder:
+        raise ValueError(
+            "A folder with this name already exists in this folder.")
+
     db.session.add(new_folder)
     db.session.commit()
 
@@ -67,12 +74,11 @@ def get_folder_contents(folder_id):
         return jsonify({"message": "Folder not found"}), 404
 
     # Fetch documents and subfolders within the specified folder
-    subfolders = Folder.query.filter_by(parent_id=folder_id).all()
+    folders = Folder.query.filter_by(parent_id=folder_id).all()
     documents = Document.query.filter_by(folder_id=folder_id).all()
 
     return jsonify({
-        "folder": folder.name,
-        "subfolders": [subfolder.name for subfolder in subfolders],
+        "folders": [{"id": folder.id, "name": folder.name} for folder in folders],
         "documents": [{"id": doc.id, "title": doc.title} for doc in documents]
     })
 

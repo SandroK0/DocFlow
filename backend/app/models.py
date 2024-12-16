@@ -24,28 +24,12 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-    def create_document(self, document):
-        # Check if a document with the same title already exists for this user
-        existing_document = Document.query.filter_by(
-            title=document.title, user_id=self.id).first()
-
-        if existing_document:
-            raise ValueError(
-                "A document with this title already exists in this folder.")
-
-        # If no duplicates, add the document
-        db.session.add(document)
-        db.session.commit()
-
-    def create_folder(self, folder):
-        pass
-
 
 # Document model for storing rich text documents (HTML content)
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    content = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

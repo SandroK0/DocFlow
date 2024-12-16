@@ -20,14 +20,14 @@ export default function Editing() {
           "Content-Type": "application/json", // Add this header
         },
       }
-    ) .then((response) => console.log(response))
-    .catch((error) => {
-      if (error.response) {
-        console.error("Error:", error.response.data); // Logs the error message from the backend
-      } else {
-        console.error("Error:", error.message);
-      }
-    });
+    ).then((response) => console.log(response))
+      .catch((error) => {
+        if (error.response) {
+          console.error("Error:", error.response.data); // Logs the error message from the backend
+        } else {
+          console.error("Error:", error.message);
+        }
+      });
   }
 
   function handleChange(newValue: string) {
@@ -58,7 +58,6 @@ export default function Editing() {
     handleGetDocument();
   }, []);
 
-  console.log(document);
   return (
     <div className={styles.Editing}>
       <div className={styles.header}>

@@ -1,101 +1,119 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { API_URL } from "../config";
+import { useNavigate } from "react-router";
 import styles from "../styles/FileManager.module.css";
 import { FaFolder } from "react-icons/fa";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { useNavigate } from "react-router";
-import { Document } from "../Types";
+import { Document, Folder } from "../Types";
+import { fetchFolderContent, createFolder, createDocument } from "../services/apiService"; // Import API functions
+
+interface CurrentContent {
+    documents: Document[];
+    folders: Folder[];
+}
 
 export default function FileManager() {
-  const [currentContent, setCurrentContent] = useState<any>();
-  const [currentFolderId, setCurrentFolderId] = useState<number | null>(null);
-  const [inputValue, setInputValue] = useState<string>("");
-  const navigate = useNavigate();
+    const [currentContent, setCurrentContent] = useState<CurrentContent | null>(null);
+    const [inputValue, setInputValue] = useState<string>("");
+    const [currentFolderIdStack, setCurrentFolderIdStack] = useState<Array<number | null>>([]);
+    const [currentFolderNameStack, setCurrentFolderNameStack] = useState<Array<string>>(["root"]);
+    const navigate = useNavigate();
 
-  const navigateToEdit = (docId: number) => {
-    navigate(`/workspace/editing/${docId}`);
-  };
+    // Peek function to get the current folder ID
+    const peek = (): number | null => {
+        return currentFolderIdStack.length > 0
+            ? currentFolderIdStack[currentFolderIdStack.length - 1]
+            : null;
+    };
 
-  const goToFolder = (folderId: number) => {
-    setCurrentFolderId(folderId);
-  };
+    const navigateToEdit = (docId: number) => {
+        navigate(`/workspace/editing/${docId}`);
+    };
 
-  const createFolder = (folderName: string, currentFolderId: number | null) => {
-    const token = localStorage.getItem("jwt"); // Fetch the JWT token from localStorage
+    const goToFolder = (folderId: number, folderName: string) => {
+        setCurrentFolderIdStack((prevStack) => [...prevStack, folderId]);
+        setCurrentFolderNameStack((prevStack) => [...prevStack, folderName])
+    };
 
-    if (!token) {
-      console.error("No JWT token found");
-      return;
-    }
+    const goBack = () => {
+        setCurrentFolderIdStack((prevStack) => {
+            if (prevStack.length === 0) return prevStack; // If stack is empty, do nothing
+            return prevStack.slice(0, -1); // Pop from the stack
+        });
+        setCurrentFolderNameStack((prevStack) => {
+            if (prevStack.length === 0) return prevStack; // If stack is empty, do nothing
+            return prevStack.slice(0, -1); // Pop from the stack
+        });
 
-    axios
-      .post(
-        `${API_URL}/folders/`,
-        {
-          name: folderName,
-          ...(currentFolderId ? { parent_id: currentFolderId } : {}), // Conditionally add parent_id if currentFolderId exists
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    };
+
+    const handleCreateFolder = async () => {
+        const parent_id = peek();
+        try {
+            await createFolder(inputValue, parent_id); // Use service
+            setCurrentFolderIdStack((prevStack) => [...prevStack]); // Trigger refetch
+        } catch (err) {
+            console.error("Error creating folder:", err);
         }
-      )
-      .then((response) => {
-        console.log("Folder created successfully:", response.data);
-        // Optionally, you can add logic here to update UI or state with the created folder
-      })
-      .catch((error) => {
-        console.error(
-          "Error creating folder:",
-          error.response?.data || error.message
-        );
-        // Handle error more effectively, show user-friendly message if needed
-      });
-  };
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/folders/${currentFolderId ? currentFolderId : "root"}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        },
-      })
-      .then((resp) => {
-        setCurrentContent(resp.data);
-      });
-  }, [currentFolderId, createFolder]);
+    };
 
-  return (
-    <div>
-      <div>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-        <button onClick={() => createFolder(inputValue, currentFolderId)}>
-          Create Folder
-        </button>
-      </div>
-      <div className={styles.container}>
-        {currentContent &&
-          currentContent.folders.map((folder: any) => (
-            <div className={styles.item} onClick={() => goToFolder(folder.id)}>
-              <FaFolder /> {folder.name}
+    const handleCreateDocument = async () => {
+        const folder_id = peek();
+        try {
+            await createDocument(inputValue, folder_id); // Use service
+            setCurrentFolderIdStack((prevStack) => [...prevStack]); // Trigger refetch
+        } catch (err) {
+            console.error("Error creating document:", err);
+        }
+    };
+
+    useEffect(() => {
+        const currentFolderId = peek() ?? "root"; // Use "root" if stack is empty
+        fetchFolderContent(currentFolderId) // Use service
+            .then((data) => {
+                setCurrentContent(data);
+                console.log(data);
+            })
+            .catch((err) => {
+                console.error("Error fetching folder content:", err);
+            });
+    }, [currentFolderIdStack]);
+
+    return (
+        <div>
+            <div>
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                />
+                <button onClick={handleCreateFolder}>Create Folder</button>
+                <button onClick={handleCreateDocument}>Create Document</button>
+                <button onClick={goBack} disabled={currentFolderIdStack.length === 0}>
+                    Go Back
+                </button>
             </div>
-          ))}
-        {currentContent &&
-          currentContent.documents.map((document: Document) => (
-            <div
-              key={document.id}
-              className={styles.item}
-              onClick={() => navigateToEdit(document.id)}
-            >
-              <IoDocumentTextOutline /> {document.title}
+            <div>{currentFolderNameStack.join("/")}</div>
+            <div className={styles.container}>
+                {currentContent &&
+                    [...currentContent.folders, ...currentContent.documents].map((item: Folder | Document) => {
+                        const isFolder = (item as Folder).name !== undefined;
+                        return (
+                            <div
+                                key={`item-${isFolder ? (item as Folder).id : (item as Document).id}`}
+                                className={styles.item}
+                                onClick={() =>
+                                    isFolder
+                                        ? goToFolder((item as Folder).id, (item as Folder).name)
+                                        : navigateToEdit((item as Document).id)
+                                }
+                            >
+                                {isFolder ? <FaFolder /> : <IoDocumentTextOutline />}{" "}
+                                {isFolder ? (item as Folder).name : (item as Document).title}
+                            </div>
+                        );
+                    })}
             </div>
-          ))}
-      </div>
-    </div>
-  );
+        </div>
+    );
 }
+

@@ -22,19 +22,28 @@ def create_document():
 
     # Check if the required fields are in the request data
     title = data.get('title')
-    content = data.get('content')
     folder_id = data.get("folder_id")
 
-    if not title or not content:
+    if not title:
         return jsonify({"msg": "Title and content are required"}), 400
 
     # Create the document
-    document = Document(title=title, content=content,
+    document = Document(title=title,
                         folder_id=folder_id, user_id=user.id)
 
     try:
         # This will raise ValueError if duplicate found
-        user.create_document(document)
+        # Check if a document with the same title already exists for this user
+        existing_document = Document.query.filter_by(
+            title=document.title, user_id=user.id).first()
+
+        if existing_document:
+            raise ValueError(
+                "A document with this title already exists in this folder.")
+
+        # If no duplicates, add the document
+        db.session.add(document)
+        db.session.commit()
         return jsonify({"msg": "Document created successfully", "document_id": document.id}), 201
     except ValueError as e:
         # Return the error message for duplicates
