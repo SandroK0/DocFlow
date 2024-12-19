@@ -3,9 +3,8 @@ from flask_jwt_extended import JWTManager
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
+
 # User model with JWT auth
-
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -40,6 +39,17 @@ class Document(db.Model):
     def __repr__(self):
         return f'<Document {self.title}>'
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "user_id": self.user_id,
+            "folder_id": self.folder_id
+        }
+
 
 # Folder model to organize documents and other folders
 class Folder(db.Model):
@@ -54,5 +64,19 @@ class Folder(db.Model):
                              id], backref='children', lazy=True)
     documents = db.relationship('Document', backref='folder', lazy=True)
 
+    @property
+    def is_empty(self):
+        """Check if the folder is empty (no subfolders and no documents)."""
+        return len(self.children) == 0 and len(self.documents) == 0
+
     def __repr__(self):
         return f'<Folder {self.name}>'
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "parent_id": self.parent_id,
+            "user_id": self.user_id,
+            "is_empty": self.is_empty,
+        }

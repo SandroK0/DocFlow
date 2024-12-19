@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app import db
-from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
+from datetime import timedelta
+from flask_jwt_extended import create_access_token
 from app.models import User
 
 user_bp = Blueprint('user', __name__)
@@ -38,5 +39,6 @@ def login():
 
     # Create JWT token with user ID as the subject (identity)
     access_token = create_access_token(
-        identity=str(user.id))  # Convert user.id to string
+        identity=str(user.id), expires_delta=timedelta(days=1)
+    )
     return jsonify(access_token=access_token), 200

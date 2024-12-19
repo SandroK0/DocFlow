@@ -73,14 +73,7 @@ def get_document(id):
     if document.user_id != current_user_id:
         return jsonify({"msg": "You are not authorized to view this document"}), 403
 
-    return jsonify({
-        "id": document.id,
-        "title": document.title,
-        "content": document.content,
-        "created_at": document.created_at,
-        "updated_at": document.updated_at,
-        "folder_id": document.folder_id
-    }), 200
+    return jsonify(document.to_dict()), 200
 
 
 # Update a document route
@@ -100,10 +93,13 @@ def update_document(id):
     document.title = data.get('title', document.title)
     # Update content with new HTML
     document.content = data.get('content', document.content)
+    document.folder_id = data.get('folder_id', document.folder_id)
+
     db.session.commit()
     return jsonify({"msg": "Document updated successfully"}), 200
 
 
+# Delete a document route
 @documents_bp.route("/<int:id>", methods=["DELETE"])
 @jwt_required()
 def delete_document(id):

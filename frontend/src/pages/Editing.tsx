@@ -1,33 +1,23 @@
 import { useParams } from "react-router";
 import Editor from "../components/Editor";
-import { API_URL } from "../config";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Document } from "../Types";
 import styles from "../styles/Editing.module.css";
+import { getDocument, updateDocument } from "../services/apiService";
 
 export default function Editing() {
   const { docId } = useParams<{ docId: string }>();
   const [document, setDocument] = useState<Document | null>(null);
 
-  function handleSave() {
-    axios.put(
-      `${API_URL}/documents/${docId}`,
-      { title: document?.title, content: document?.content },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`, // JWT token
-          "Content-Type": "application/json", // Add this header
-        },
+  async function handleSave() {
+    try {
+      if (document) {
+        await updateDocument(document)
+        console.log("Document Saved")
       }
-    ).then((response) => console.log(response))
-      .catch((error) => {
-        if (error.response) {
-          console.error("Error:", error.response.data); // Logs the error message from the backend
-        } else {
-          console.error("Error:", error.message);
-        }
-      });
+    } catch (err) {
+      console.log("Error while saving document.", err)
+    }
   }
 
   function handleChange(newValue: string) {
@@ -36,22 +26,13 @@ export default function Editing() {
     }
   }
 
-  function handleGetDocument() {
-    axios
-      .get(`${API_URL}/documents/${docId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`, // JWT token
-          "Content-Type": "application/json", // Add this header
-        },
-      })
-      .then((response) => setDocument(response.data))
-      .catch((error) => {
-        if (error.response) {
-          console.error("Error:", error.response.data); // Logs the error message from the backend
-        } else {
-          console.error("Error:", error.message);
-        }
-      });
+  async function handleGetDocument() {
+    try {
+      const document = await getDocument(Number(docId))
+      setDocument(document)
+    } catch (err) {
+      console.log("Error while getting document.", err)
+    }
   }
 
   useEffect(() => {

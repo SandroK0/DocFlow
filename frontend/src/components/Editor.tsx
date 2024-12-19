@@ -17,7 +17,7 @@ export default function Editor(props: any) {
   const editorStyles = {
     width: "900px",
     height: "800px",
-   
+
   };
 
   return (

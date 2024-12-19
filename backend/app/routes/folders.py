@@ -22,19 +22,28 @@ def create_folder():
     # Get folder data from request
     data = request.get_json()
     folder_name = data.get('name')
-    # default to None for root folder
+    # Default to None for root folder
     parent_id = data.get('parent_id', None)
 
     if not folder_name:
         return jsonify({"message": "Folder name is required"}), 400
 
-    # Create a new folder
+    # Check if the parent folder exists and belongs to the current user
+    if parent_id:
+        parent_folder = Folder.query.get(parent_id)
+        if not parent_folder:
+            return jsonify({"message": "Parent folder not found"}), 404
+
+        if parent_folder.user_id != current_user_id:
+            return jsonify({"message": "Parent folder does not belong to the current user"}), 403
+
     new_folder = Folder(
         name=folder_name,
         parent_id=parent_id,
         user_id=current_user_id
     )
 
+    # Check if a folder with the same name already exists in the parent folder
     existing_folder = Folder.query.filter_by(
         name=new_folder.name, user_id=user.id, parent_id=new_folder.parent_id).first()
 
@@ -55,9 +64,10 @@ def create_folder():
     }), 201
 
 
+@folders_bp.route('/', methods=['GET'])
 @folders_bp.route('/<int:folder_id>', methods=['GET'])
 @jwt_required()
-def get_folder_contents(folder_id):
+def get_folder_contents(folder_id=None):
     current_user_id = get_jwt_identity()
     current_user_id = int(current_user_id)
 
@@ -66,42 +76,59 @@ def get_folder_contents(folder_id):
     if not user:
         return jsonify({"msg": "User not found"}), 404
 
-    # Get folder by ID and check if it's the user's folder
-    folder = Folder.query.filter_by(
-        id=folder_id, user_id=current_user_id).first()
+    if folder_id is None:
+        # Fetch root-level folders and documents
+        root_folders = Folder.query.filter_by(
+            user_id=user.id, parent_id=None).all()
+        root_documents = Document.query.filter_by(
+            user_id=user.id, folder_id=None).all()
+
+        return jsonify({
+            "folders": [folder.to_dict() for folder in root_folders],
+            "documents": [doc.to_dict() for doc in root_documents]
+        })
+    else:
+        # Fetch the requested folder
+        folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
+
+        if not folder:
+            return jsonify({"message": "Folder not found"}), 404
+
+        # Use relationships to get subfolders and documents
+        return jsonify({
+            "folders": [child.to_dict() for child in folder.children],
+            "documents": [doc.to_dict() for doc in folder.documents]
+        })
+
+
+@folders_bp.route('/<int:folder_id>', methods=['DELETE'])
+@jwt_required()
+def delete_folder(folder_id):
+    current_user_id = get_jwt_identity()
+    current_user_id = int(current_user_id)
+
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
 
     if not folder:
         return jsonify({"message": "Folder not found"}), 404
 
-    # Fetch documents and subfolders within the specified folder
-    folders = Folder.query.filter_by(parent_id=folder_id).all()
-    documents = Document.query.filter_by(folder_id=folder_id).all()
+    # Recursive function to delete nested folders and documents
+    def delete_nested_folders(folder):
+        for document in folder.documents:
+            db.session.delete(document)
 
-    return jsonify({
-        "folders": [{"id": folder.id, "name": folder.name} for folder in folders],
-        "documents": [{"id": doc.id, "title": doc.title} for doc in documents]
-    })
+        for subfolder in folder.children:
+            delete_nested_folders(subfolder)
 
+        db.session.delete(folder)
 
-@folders_bp.route('/root', methods=['GET'])
-@jwt_required()
-def get_root_folder_contents():
-    # Get current logged-in user
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
+    delete_nested_folders(folder)
 
-    user = User.query.get(current_user_id)
+    db.session.commit()
 
-    if not user:
-        return jsonify({"msg": "User not found"}), 404
-
-    # Get all documents and subfolders inside the root folder
-    folders = Folder.query.filter_by(
-        user_id=current_user_id, parent_id=None).all()
-    documents = Document.query.filter_by(
-        user_id=current_user_id, folder_id=None).all()
-    print("test")
-    return jsonify({
-        "folders": [{"id": folder.id, "name": folder.name} for folder in folders],
-        "documents": [{"id": doc.id, "title": doc.title} for doc in documents]
-    })
+    return jsonify({"message": "Folder and all nested contents deleted successfully"}), 200

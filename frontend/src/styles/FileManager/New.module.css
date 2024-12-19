@@ -1,0 +1,85 @@
+.container {
+  background-color: #ffffff;
+  width: 500px;
+  height: 300px;
+  margin: auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.option {
+  margin: 10px 0;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f0f4ff;
+  transition: all 0.3s ease;
+}
+
+.option:hover {
+  background-color: #dce6ff;
+  border-color: #9bbcff;
+}
+
+.input {
+  width: calc(100% - 20px);
+  padding: 12px;
+  margin: 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.submitButton {
+  padding: 12px 25px;
+  margin: 10px 5px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #45a049;
+}
+
+.backButton {
+  padding: 12px 25px;
+  margin: 10px 5px;
+  border: none;
+  background-color: #f44336;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #e53935;
+}
+
+button {
+  outline: none;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+}

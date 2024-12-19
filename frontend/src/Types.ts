@@ -10,4 +10,5 @@ export interface Document {
 export interface Folder {
   id: number;
   name: string;
+  is_empty: boolean;
 }

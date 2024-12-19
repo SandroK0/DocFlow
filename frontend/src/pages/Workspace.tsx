@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import FileManager from "../components/FileManager";
+import FileManager from "../components/FileManager/FileManager";
 import styles from "../styles/Workspace.module.css";
 
 export default function Workspace() {

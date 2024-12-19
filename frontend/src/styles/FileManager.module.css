@@ -1,5 +1,5 @@
 .container {
-  width: 800px;
+  width: 1000px;
   height: 500px;
   border: 1px solid #ccc;
 
@@ -10,17 +10,17 @@
 }
 
 .item {
-  width: 100%;
-  background-color: #ededed;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-  padding: 5px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  width: 100%;
+  cursor: pointer;
+  padding: 10px;
+
+  border: 1px solid #ccc;
+  background-color: #ccc;
 }
 
 .item:hover {
-    opacity: 0.8;
+  opacity: 0.8;
 }
