@@ -32,19 +32,14 @@ function MoveModal(props: MoveModalProps) {
     { id: -1, name: "" },
   ]);
 
-  const peek = useCallback(
-    () => folderHistory[folderHistory.length - 1],
-    [folderHistory],
-  );
+  const peek = () => folderHistory[folderHistory.length - 1];
 
   const goToFolder = (folderId: number, folderName: string) => {
     setFolderHistory((prev) => [...prev, { id: folderId, name: folderName }]);
   };
-
-  const getPath = useCallback(
-    () => folderHistory.map((node) => node.name).join("/") || "/",
-    [folderHistory],
-  );
+  const getPath = () => {
+    return folderHistory.map((node) => node.name).join("/");
+  };
 
   const goBack = () => {
     setFolderHistory((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
@@ -99,9 +94,12 @@ function MoveModal(props: MoveModalProps) {
   const refetchContent = useCallback(() => {
     const currentFolderId = peek().id === -1 ? null : peek().id;
     fetchFolderContent(currentFolderId)
-      .then((data) => setCurrentFolders(data))
+      .then((data) => {
+        console.log(data);
+        setCurrentFolders(data);
+      })
       .catch((err) => console.error("Error fetching folder content:", err));
-  }, [peek]);
+  }, []);
 
   useEffect(() => {
     refetchContent();
@@ -109,7 +107,7 @@ function MoveModal(props: MoveModalProps) {
     return () => {
       setCurrentFolders(null);
     };
-  }, [folderHistory, refetchContent]);
+  }, [folderHistory]);
 
   return (
     <>
@@ -128,7 +126,7 @@ function MoveModal(props: MoveModalProps) {
         >
           <div className={styles.container} ref={modalRef}>
             <h3>
-              Moving {isFolder ? "folder" : "document"}: {name}
+              Moving {isFolder ? "folder" : "document"} named: {name}
             </h3>
             <button onClick={() => goBack()}>Back</button>
             <div>Current Location: {getPath()}</div>

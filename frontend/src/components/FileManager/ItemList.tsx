@@ -1,13 +1,16 @@
 import styles from "../../styles/./FileManager/ItemList.module.css";
 import { Folder, Document } from "../../Types";
 import { useFileManager } from "./useFileManager";
-import { Item } from "./Item";
-import { useState } from "react";
+import Item from "./Item";
+import { useEffect, useState } from "react";
 
 export default function ItemList() {
   const { currentContent } = useFileManager();
   const [showOptions, setShowOptions] = useState<number | null>(0);
 
+  useEffect(() => {
+    setShowOptions(null);
+  }, [currentContent]);
   return (
     <div className={styles.container}>
       {currentContent &&
@@ -24,7 +27,7 @@ export default function ItemList() {
                 showOptions={showOptions}
               />
             );
-          }
+          },
         )}
     </div>
   );

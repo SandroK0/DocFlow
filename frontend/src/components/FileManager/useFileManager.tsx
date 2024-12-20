@@ -22,6 +22,7 @@ interface FolderHistoryItem {
 
 interface FileManagerContextType {
   currentContent: ContentType | null;
+  refetchContent: () => void;
   folderHistory: FolderHistoryItem[];
   handleCreateFolder: (name: string) => Promise<void>;
   handleDeleteFolder: (id: number) => Promise<void>;
@@ -36,14 +37,14 @@ interface FileManagerContextType {
 }
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [currentContent, setCurrentContent] = useState<ContentType | null>(
-    null
+    null,
   );
   const [folderHistory, setFolderHistory] = useState<FolderHistoryItem[]>([
     { id: -1, name: "" },
@@ -95,8 +96,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const handleMoveFolder =  async (id: number, new_parent_id: number) => {
-
+  const handleMoveFolder = async (id: number, new_parent_id: number) => {
     try {
       await updateFolder(id, new_parent_id === -1 ? null : new_parent_id);
       refetchContent();
@@ -116,7 +116,12 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleMoveDocument = async (id: number, new_folder_id: number) => {
     try {
-      await updateDocument(id, undefined, undefined, new_folder_id === -1 ? null : new_folder_id);
+      await updateDocument(
+        id,
+        undefined,
+        undefined,
+        new_folder_id === -1 ? null : new_folder_id,
+      );
 
       refetchContent();
     } catch (error) {
@@ -149,6 +154,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     <FileManagerContext.Provider
       value={{
         currentContent,
+        refetchContent,
         folderHistory,
         handleCreateFolder,
         handleDeleteFolder,
