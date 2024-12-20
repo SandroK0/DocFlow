@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { useNavigate } from "react-router-dom";
 import { FaFolder } from "react-icons/fa";
@@ -30,7 +30,15 @@ const Item: React.FC<ItemProps> = ({
   setShowOptions,
 }) => {
   const navigate = useNavigate();
-  const { goToFolder, handleMoveDocument, handleMoveFolder } = useFileManager();
+  const {
+    goToFolder,
+    handleMoveDocument,
+    handleMoveFolder,
+    handleRenameFolder,
+    handleRenameDocument,
+  } = useFileManager();
+  const [renaming, setRenaming] = useState<boolean>(false);
+  const [rnInputValue, setRnInputValue] = useState<string>("");
   const navigateToEdit = (docId: number) =>
     navigate(`/workspace/editing/${docId}`);
 
@@ -79,23 +87,81 @@ const Item: React.FC<ItemProps> = ({
       >
         <div>
           {isFolder ? <FaFolder /> : <IoDocumentTextOutline />}
-          {isFolder ? (item as Folder).name : (item as Document).title}
+          {isFolder ? (
+            renaming ? (
+              <input
+                type="text"
+                value={rnInputValue}
+                onChange={(e) => {
+                  setRnInputValue(e.target.value);
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              (item as Folder).name
+            )
+          ) : renaming ? (
+            <input
+              type="text"
+              value={rnInputValue}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                setRnInputValue(e.target.value);
+              }}
+            />
+          ) : (
+            (item as Document).title
+          )}
         </div>
         <div
           className={styles.itemOptions}
           onClick={(e) => e.stopPropagation()}
         >
-          {showOptions === indx && (
+          {renaming ? (
             <>
-              <MoveModal item={item} isFolder={isFolder} />
-              <DeleteModal item={item} isFolder={isFolder}></DeleteModal>
+              <button
+                onClick={() => {
+                  if (isFolder) {
+                    handleRenameFolder(item.id, rnInputValue);
+                  } else {
+                    handleRenameDocument(item.id, rnInputValue);
+                  }
+                  setRenaming(false);
+                }}
+              >
+                done
+              </button>
+              <button onClick={() => setRenaming(false)}>cancel</button>
+            </>
+          ) : (
+            <>
+              {showOptions === indx && (
+                <>
+                  <button
+                    onClick={() => {
+                      setRnInputValue(
+                        isFolder
+                          ? (item as Folder).name
+                          : (item as Document).title,
+                      );
+                      setRenaming(true);
+                    }}
+                  >
+                    Rename
+                  </button>
+                  <MoveModal item={item} isFolder={isFolder} />
+                  <DeleteModal item={item} isFolder={isFolder}></DeleteModal>
+                </>
+              )}
+              <button
+                onClick={() =>
+                  setShowOptions(indx === showOptions ? null : indx)
+                }
+              >
+                options
+              </button>
             </>
           )}
-          <button
-            onClick={() => setShowOptions(indx === showOptions ? null : indx)}
-          >
-            options
-          </button>
         </div>
       </div>
     </div>

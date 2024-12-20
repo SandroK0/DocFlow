@@ -27,9 +27,11 @@ interface FileManagerContextType {
   handleCreateFolder: (name: string) => Promise<void>;
   handleDeleteFolder: (id: number) => Promise<void>;
   handleMoveFolder: (id: number, new_parent_id: number) => void;
+  handleRenameFolder: (id: number, new_title: string) => void;
   handleCreateDocument: (title: string) => Promise<void>;
   handleDeleteDocument: (id: number) => Promise<void>;
   handleMoveDocument: (id: number, new_parent_id: number) => void;
+  handleRenameDocument: (id: number, new_title: string) => void;
   goToFolder: (folderId: number, folderName: string) => void;
   goBack: () => void;
   getPath: () => string;
@@ -105,6 +107,15 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const handleRenameFolder = async (id: number, new_name: string) => {
+    try {
+      await updateFolder(id, undefined, new_name);
+      refetchContent();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleDeleteDocument = async (id: number) => {
     try {
       await deleteDocument(id);
@@ -139,6 +150,15 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const handleRenameDocument = async (id: number, new_title: string) => {
+    try {
+      await updateDocument(id, new_title, undefined, undefined);
+      refetchContent();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const refetchContent = () => {
     const currentFolderId = peek().id === -1 ? null : peek().id;
     fetchFolderContent(currentFolderId)
@@ -159,9 +179,11 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
         handleCreateFolder,
         handleDeleteFolder,
         handleMoveFolder,
+        handleRenameFolder,
         handleCreateDocument,
         handleDeleteDocument,
         handleMoveDocument,
+        handleRenameDocument,
         goToFolder,
         goBack,
         getPath,
