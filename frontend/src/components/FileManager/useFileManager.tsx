@@ -5,10 +5,11 @@ import {
   deleteFolder,
   createDocument,
   deleteDocument,
+  updateDocument,
+  updateFolder,
 } from "../../services/apiService";
 import { Folder, Document } from "../../Types";
 
-// Types for content and history
 interface ContentType {
   documents: Document[];
   folders: Folder[];
@@ -19,16 +20,18 @@ interface FolderHistoryItem {
   name: string;
 }
 
-// Context type
 interface FileManagerContextType {
   currentContent: ContentType | null;
   folderHistory: FolderHistoryItem[];
   handleCreateFolder: (name: string) => Promise<void>;
   handleDeleteFolder: (id: number) => Promise<void>;
+  handleMoveFolder: (id: number, new_parent_id: number) => void;
   handleCreateDocument: (title: string) => Promise<void>;
   handleDeleteDocument: (id: number) => Promise<void>;
+  handleMoveDocument: (id: number, new_parent_id: number) => void;
   goToFolder: (folderId: number, folderName: string) => void;
   goBack: () => void;
+  getPath: () => string;
   handlePathClick: (folder_id: number) => void;
 }
 
@@ -53,9 +56,8 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const handlePathClick = (nodeId: number) => {
-    let newFolderHistory = [...folderHistory]; // Create a copy of the folderHistory state
+    let newFolderHistory = [...folderHistory];
 
-    // Pop folders from history until you reach the target nodeId
     while (
       newFolderHistory.length > 0 &&
       newFolderHistory[newFolderHistory.length - 1].id !== nodeId
@@ -63,8 +65,11 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       newFolderHistory.pop();
     }
 
-    // Update the folder history in state
     setFolderHistory(newFolderHistory);
+  };
+
+  const getPath = () => {
+    return folderHistory.map((node) => node.name).join("/");
   };
 
   const goBack = () => {
@@ -84,8 +89,19 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleDeleteFolder = async (folder_id: number) => {
     try {
       await deleteFolder(folder_id);
+      refetchContent();
     } catch (err) {
       console.log("Error deleting folder:", err);
+    }
+  };
+
+  const handleMoveFolder =  async (id: number, new_parent_id: number) => {
+
+    try {
+      await updateFolder(id, new_parent_id === -1 ? null : new_parent_id);
+      refetchContent();
+    } catch (error) {
+      console.error("Error moving folder:", error);
     }
   };
 
@@ -95,6 +111,16 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       refetchContent();
     } catch (err) {
       console.error("Error deleting document:", err);
+    }
+  };
+
+  const handleMoveDocument = async (id: number, new_folder_id: number) => {
+    try {
+      await updateDocument(id, undefined, undefined, new_folder_id === -1 ? null : new_folder_id);
+
+      refetchContent();
+    } catch (error) {
+      console.error("Error moving document:", error);
     }
   };
 
@@ -126,10 +152,13 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
         folderHistory,
         handleCreateFolder,
         handleDeleteFolder,
+        handleMoveFolder,
         handleCreateDocument,
         handleDeleteDocument,
+        handleMoveDocument,
         goToFolder,
         goBack,
+        getPath,
         handlePathClick,
       }}
     >

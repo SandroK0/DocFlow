@@ -1,6 +1,6 @@
 .container {
   width: 1000px;
-  height: 500px;
+  height: 800px;
   border: 1px solid #ccc;
 
   display: flex;
@@ -21,6 +21,26 @@
   background-color: #ccc;
 }
 
+.itemContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.itemOptions {
+  display: flex;
+  gap: 10px;
+}
+
 .item:hover {
   opacity: 0.8;
+}
+
+.folder {
+  background-color: #e0f7fa;
+}
+
+.document {
+  background-color: #fff9c4;
 }

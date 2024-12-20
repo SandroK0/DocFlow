@@ -9,18 +9,16 @@ interface DeleteModalProps {
 }
 
 function DeleteModal(props: DeleteModalProps) {
-  const [show, setShow] = useState<boolean>(false); // To control modal visibility
+  const [show, setShow] = useState<boolean>(false);
   const { item, isFolder } = props;
   const { handleDeleteDocument, handleDeleteFolder } = useFileManager();
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  // Determine type-specific properties once
   const { name, is_empty } = isFolder
     ? (item as Folder)
     : { name: (item as Document).title, is_empty: true };
 
-  // Close modal on Escape key press
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -37,7 +35,6 @@ function DeleteModal(props: DeleteModalProps) {
     };
   }, [show]);
 
-  // Close modal on outside click
   const handleOutsideClick = (event: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
       setShow(false);
@@ -64,7 +61,7 @@ function DeleteModal(props: DeleteModalProps) {
             height: "100vh",
             zIndex: 11,
             position: "absolute",
-            backgroundColor: "rgba(0, 0, 0, 0.5)", // Dim background
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
             top: 0,
             left: 0,
           }}
@@ -79,13 +76,12 @@ function DeleteModal(props: DeleteModalProps) {
               <div
                 className={styles.option}
                 onClick={() => {
-                  // Call the appropriate delete function
                   if (isFolder) {
                     handleDeleteFolder((item as Folder).id);
                   } else {
                     handleDeleteDocument((item as Document).id);
                   }
-                  setShow(false); // Close modal after action
+                  setShow(false);
                 }}
               >
                 Yes

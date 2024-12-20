@@ -132,3 +132,29 @@ def delete_folder(folder_id):
     db.session.commit()
 
     return jsonify({"message": "Folder and all nested contents deleted successfully"}), 200
+
+
+@folders_bp.route('/<int:folder_id>', methods=['PUT'])
+@jwt_required()
+def update_folder(folder_id):
+    current_user_id = get_jwt_identity()
+    current_user_id = int(current_user_id)
+
+    user = User.query.get(current_user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
+
+    if not folder:
+        return jsonify({"message": "Folder not found"}), 404
+
+    data = request.get_json()
+
+    folder.name = data.get('name', folder.name)
+    folder.parent_id = data.get('parent_id', folder.parent_id)
+
+    db.session.commit()
+
+    return jsonify({"msg": "Folder updated successfully"}), 200
+

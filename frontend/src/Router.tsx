@@ -41,8 +41,8 @@ const Router: React.FC = () => {
           <Route path="workspace" element={<Workspace />} />
           <Route path="workspace/editing/:docId" element={<Editing />} />
         </Route>
-      </Route>
-    )
+      </Route>,
+    ),
   );
 
   return <RouterProvider router={router} />;

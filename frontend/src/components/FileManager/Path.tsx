@@ -1,11 +1,11 @@
-import styles from "../../styles/FileManager.module.css";
+import styles from "../../styles/FileManager/FolderNavigation.module.css";
 import { useFileManager } from "./useFileManager";
 
-export default function FolderNavigation() {
+export default function Path() {
   const { folderHistory, handlePathClick } = useFileManager();
 
   return (
-    <div className={styles.folderNavigation}>
+    <div className={styles.Path}>
       {folderHistory.map((node, index) => (
         <span
           style={{ cursor: "pointer" }}

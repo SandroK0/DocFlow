@@ -1,21 +1,23 @@
-import styles from "../../styles/FileManager.module.css";
+import styles from "../../styles/FileManager/ItemList.module.css";
 import { useFileManager } from "./useFileManager";
 import { FaFolder } from "react-icons/fa";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Folder, Document } from "../../Types";
 import DeleteModal from "./DeleteModal";
+import MoveModal from "./MoveModal";
 
 interface ItemProps {
   item: Document | Folder;
   isFolder: boolean;
+  showOptions: number | null;
+  setShowOptions: (value: number | null) => void;
+  indx: number;
 }
 
 export const Item = (props: ItemProps) => {
   const { goToFolder } = useFileManager();
-  const { item, isFolder } = props;
-  const [showOptions, setShowOptions] = useState<boolean>(false);
+  const { item, isFolder, setShowOptions, indx, showOptions } = props;
 
   const navigate = useNavigate();
 
@@ -38,12 +40,17 @@ export const Item = (props: ItemProps) => {
         </div>
       </div>
       <div className={styles.itemOptions}>
-        <button onClick={() => setShowOptions((prev) => !prev)}>options</button>
-        {showOptions && (
-          <div>
+        {showOptions === indx && (
+          <>
+            <MoveModal item={item} isFolder={isFolder} />
             <DeleteModal item={item} isFolder={isFolder}></DeleteModal>
-          </div>
+          </>
         )}
+        <button
+          onClick={() => setShowOptions(indx === showOptions ? null : indx)}
+        >
+          options
+        </button>
       </div>
     </div>
   );

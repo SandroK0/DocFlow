@@ -90,8 +90,8 @@ def update_document(id):
     if document.user_id != user.id:
         return jsonify({"msg": "You do not have permission to edit this document"}), 403
     data = request.get_json()
+
     document.title = data.get('title', document.title)
-    # Update content with new HTML
     document.content = data.get('content', document.content)
     document.folder_id = data.get('folder_id', document.folder_id)
 
