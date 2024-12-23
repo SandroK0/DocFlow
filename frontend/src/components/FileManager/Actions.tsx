@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import styles from "../../styles/FileManager/Actions.module.css";
 import NewItemModal from "./Modals/NewItemModal";
 import ReactDOM from "react-dom";
@@ -6,9 +6,16 @@ import ReactDOM from "react-dom";
 interface ActionsProps {
   onGoBack: () => void;
   disableGoBack: boolean;
+  view: "Grid" | "List";
+  setView: Dispatch<SetStateAction<"Grid" | "List">>;
 }
 
-export default function Actions({ onGoBack, disableGoBack }: ActionsProps) {
+export default function Actions({
+  onGoBack,
+  disableGoBack,
+  view,
+  setView,
+}: ActionsProps) {
   const [modal, setModal] = useState<"New" | null>(null);
 
   return (
@@ -18,6 +25,8 @@ export default function Actions({ onGoBack, disableGoBack }: ActionsProps) {
           Back
         </button>
         <button onClick={() => setModal("New")}>New</button>
+        <button onClick={() => setView("Grid")}>grid</button>
+        <button onClick={() => setView("List")}>list</button>
       </div>
       {modal === "New" &&
         ReactDOM.createPortal(

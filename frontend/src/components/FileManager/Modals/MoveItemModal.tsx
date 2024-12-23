@@ -5,6 +5,7 @@ import { FaFolder } from "react-icons/fa";
 import { fetchFolderContent } from "../../../services/apiService";
 import { useFileManager } from "../useFileManager";
 import ModalContWrapper from "./ModalContWrapper";
+import Path from "../Path";
 
 interface MoveItemModalProps {
   item: Document | Folder;
@@ -32,13 +33,23 @@ function MoveItemModal(props: MoveItemModalProps) {
     { id: -1, name: "" },
   ]);
 
+  const handlePathClick = (nodeId: number) => {
+    let newFolderHistory = [...folderHistory];
+
+    while (
+      newFolderHistory.length > 0 &&
+      newFolderHistory[newFolderHistory.length - 1].id !== nodeId
+    ) {
+      newFolderHistory.pop();
+    }
+
+    setFolderHistory(newFolderHistory);
+  };
+
   const peek = () => folderHistory[folderHistory.length - 1];
 
   const goToFolder = (folderId: number, folderName: string) => {
     setFolderHistory((prev) => [...prev, { id: folderId, name: folderName }]);
-  };
-  const getPath = () => {
-    return folderHistory.map((node) => node.name).join("/");
   };
 
   const goBack = () => {
@@ -80,7 +91,10 @@ function MoveItemModal(props: MoveItemModalProps) {
           Moving {isFolder ? "folder" : "document"} named: {name}
         </h3>
         <button onClick={() => goBack()}>Back</button>
-        <div>Current Location: {getPath()}</div>
+        <Path
+          folderHistory={folderHistory}
+          handlePathClick={handlePathClick}
+        ></Path>
         <div className={styles.folderCont}>
           {currentFolders?.folders.map((folder) => {
             if (folder.id === item.id) {

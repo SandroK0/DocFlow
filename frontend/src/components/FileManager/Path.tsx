@@ -1,21 +1,44 @@
-import styles from "../../styles/FileManager/FolderNavigation.module.css";
-import { useFileManager } from "./useFileManager";
+import { AiOutlineHome } from "react-icons/ai"; // Importing home icon
+import styles from "../../styles/FileManager/Path.module.css";
 
-export default function Path() {
-  const { folderHistory, handlePathClick } = useFileManager();
+interface FolderHistoryItem {
+  id: number;
+  name: string;
+}
 
+interface PathProps {
+  folderHistory: FolderHistoryItem[];
+  handlePathClick: (folder_id: number) => void;
+}
+
+export default function Path(props: PathProps) {
+  const { folderHistory, handlePathClick } = props;
   return (
-    <div className={styles.Path}>
+    <nav className={styles.Path} aria-label="Breadcrumb">
       {folderHistory.map((node, index) => (
-        <span
-          style={{ cursor: "pointer" }}
-          key={node.id}
-          onClick={() => handlePathClick(node.id)}
-        >
-          {node.name}
-          {index < folderHistory.length - 1 && " / "}
-        </span>
+        <div className={styles.Breadcrumb} key={node.id}>
+          {index > 0 && (
+            <span className={styles.Separator} aria-hidden="true">
+              &gt;
+            </span>
+          )}
+          <span
+            className={
+              index === folderHistory.length - 1
+                ? styles.ActiveCrumb
+                : styles.Crumb
+            }
+            onClick={() =>
+              index !== folderHistory.length - 1 && handlePathClick(node.id)
+            }
+            role="button"
+            tabIndex={0}
+            aria-label={`Navigate to ${node.name}`}
+          >
+            {node.id === -1 ? <AiOutlineHome /> : node.name}
+          </span>
+        </div>
       ))}
-    </div>
+    </nav>
   );
 }

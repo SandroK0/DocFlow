@@ -1,11 +1,20 @@
-.container {
-  width: 800px;
-  height: 800px;
-  border: 1px solid #ccc;
+.listView {
+  width: 100%;
+  height: 700px;
 
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding: 10px;
+}
+
+.gridView {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 10px;
 }
 

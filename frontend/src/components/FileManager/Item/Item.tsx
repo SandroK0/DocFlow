@@ -54,28 +54,28 @@ const Item: React.FC<ItemProps> = ({
       >
         <div className={`${styles.item}`}>
           <div className={styles.itemLeft}>
-          <ItemIcon isFolder={isFolder} />
-          <ItemName
+            <ItemIcon isFolder={isFolder} />
+            <ItemName
+              item={item}
+              isFolder={isFolder}
+              renaming={renaming}
+              rnInputValue={rnInputValue}
+              setRnInputValue={setRnInputValue}
+            />
+          </div>
+          <ItemOptions
             item={item}
             isFolder={isFolder}
             renaming={renaming}
+            setRenaming={setRenaming}
             rnInputValue={rnInputValue}
             setRnInputValue={setRnInputValue}
+            handleRenameFolder={handleRenameFolder}
+            handleRenameDocument={handleRenameDocument}
+            indx={indx}
+            showOptions={showOptions}
+            setShowOptions={setShowOptions}
           />
-          </div>
-        <ItemOptions
-          item={item}
-          isFolder={isFolder}
-          renaming={renaming}
-          setRenaming={setRenaming}
-          rnInputValue={rnInputValue}
-          setRnInputValue={setRnInputValue}
-          handleRenameFolder={handleRenameFolder}
-          handleRenameDocument={handleRenameDocument}
-          indx={indx}
-          showOptions={showOptions}
-          setShowOptions={setShowOptions}
-        />
         </div>
       </div>
     </ItemDragDropWrapper>

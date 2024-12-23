@@ -33,18 +33,15 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
   const [, drop] = useDrop({
     accept: [ItemType.FOLDER, ItemType.DOCUMENT],
     drop: (draggedItem: { id: number; type: string }) => {
-      if (
-        isFolder &&
-        draggedItem.type === ItemType.DOCUMENT &&
-        draggedItem.id !== item.id
-      ) {
+      if (draggedItem.type === ItemType.DOCUMENT) {
         handleMoveDocument(draggedItem.id, item.id);
+        console.log(draggedItem.id, item.id);
       } else if (
-        isFolder &&
         draggedItem.type === ItemType.FOLDER &&
         draggedItem.id !== item.id
       ) {
         handleMoveFolder(draggedItem.id, item.id);
+        console.log(draggedItem.id, item.id);
       }
     },
     canDrop: () => isFolder,
@@ -61,4 +58,3 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
 };
 
 export default ItemDragDropWrapper;
-

@@ -1,0 +1,45 @@
+.Path {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  color: #333;
+}
+
+.HomeIcon {
+  font-size: 16px;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.Breadcrumb {
+  display: flex;
+  align-items: center;
+}
+
+.Separator {
+  margin: 0 8px;
+  color: #999;
+  font-size: 14px;
+}
+
+.Crumb {
+  cursor: pointer;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.Crumb:hover {
+  color: #007bff;
+}
+
+.ActiveCrumb {
+  color: #5a67d8;
+  font-weight: bold;
+  cursor: default;
+  pointer-events: none;
+}

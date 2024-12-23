@@ -49,7 +49,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     null,
   );
   const [folderHistory, setFolderHistory] = useState<FolderHistoryItem[]>([
-    { id: -1, name: "" },
+    { id: -1, name: "home" },
   ]);
 
   const peek = () => folderHistory[folderHistory.length - 1];

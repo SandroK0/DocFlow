@@ -7,16 +7,24 @@ import { getDocument, updateDocument } from "../services/apiService";
 
 export default function Editing() {
   const { docId } = useParams<{ docId: string }>();
+  const [prevDocumentState, setPrevDocumentState] = useState<Document | null>(
+    null,
+  );
   const [document, setDocument] = useState<Document | null>(null);
 
   async function handleSave() {
     try {
       if (document) {
-        await updateDocument(document)
-        console.log("Document Saved")
+        await updateDocument(
+          document.id,
+          document.title,
+          document.content,
+          document.folder_id,
+        );
+        setPrevDocumentState(document);
       }
     } catch (err) {
-      console.log("Error while saving document.", err)
+      console.log("Error while saving document.", err);
     }
   }
 
@@ -28,10 +36,17 @@ export default function Editing() {
 
   async function handleGetDocument() {
     try {
-      const document = await getDocument(Number(docId))
-      setDocument(document)
+      const document = await getDocument(Number(docId));
+      setDocument(document);
+      setPrevDocumentState(document);
     } catch (err) {
-      console.log("Error while getting document.", err)
+      console.log("Error while getting document.", err);
+    }
+  }
+
+  function handleInpChange(newTitle: string) {
+    if (document) {
+      setDocument({ ...document, title: newTitle });
     }
   }
 
@@ -42,8 +57,14 @@ export default function Editing() {
   return (
     <div className={styles.Editing}>
       <div className={styles.header}>
-        <h1>Editing</h1>
-        <button onClick={handleSave}>Save</button>
+        <input
+          value={document?.title}
+          onChange={(e) => handleInpChange(e.target.value)}
+          style={{ fontSize: "30px", border: "None" }}
+        />
+        <button onClick={handleSave} disabled={prevDocumentState === document}>
+          Save
+        </button>
       </div>
       <main>
         {document && (
