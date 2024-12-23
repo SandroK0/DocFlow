@@ -16,25 +16,23 @@
   width: 100%;
   cursor: pointer;
   padding: 10px;
-
   border: 1px solid #ccc;
-  background-color: #ccc;
 }
 
-.itemContent {
+.itam:hover {
+  opacity: 0.8;
+}
+
+.itemLeft {
   display: flex;
-  align-items: center;
+  gap: 10px;
   justify-content: center;
-  gap: 20px;
+  align-items: center;
 }
 
 .itemOptions {
   display: flex;
   gap: 10px;
-}
-
-.item:hover {
-  opacity: 0.8;
 }
 
 .folder {

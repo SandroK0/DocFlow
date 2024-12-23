@@ -1,7 +1,7 @@
 import styles from "../../styles/./FileManager/ItemList.module.css";
 import { Folder, Document } from "../../Types";
 import { useFileManager } from "./useFileManager";
-import Item from "./Item";
+import Item from "./Item/Item";
 import { useEffect, useState } from "react";
 
 export default function ItemList() {

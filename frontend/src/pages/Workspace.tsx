@@ -11,14 +11,16 @@ export default function Workspace() {
   }
 
   return (
-    <div className={styles.Workspace}>
-      <div className={styles.header}>
-        <h1>Workspace</h1>
-        <button onClick={handleLogout}>Logout</button>
+    <>
+      <div className={styles.Workspace}>
+        <div className={styles.header}>
+          <h1>Workspace</h1>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+        <main>
+          <FileManager></FileManager>
+        </main>
       </div>
-      <main>
-        <FileManager></FileManager>
-      </main>
-    </div>
+    </>
   );
 }
