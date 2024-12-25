@@ -7,8 +7,18 @@ export interface Document {
   folder_id: number | null;
 }
 
+export interface Subfolder {
+  id: number;
+  name: string;
+  is_empty: boolean;
+}
+
 export interface Folder {
   id: number;
   name: string;
   is_empty: boolean;
+  user_id: number;
+  parent_id: number;
+  subfolders: Subfolder[];
+  documents: Document[];
 }

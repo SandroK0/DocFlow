@@ -56,11 +56,11 @@ function MoveItemModal(props: MoveItemModalProps) {
     setFolderHistory((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
   };
 
-  const handleMoveClick = (folderId: number) => {
+  const handleMoveClick = (folderToMoveTo: Folder) => {
     if (isFolder) {
-      handleMoveFolder(item.id, folderId);
+      handleMoveFolder(item as Folder, folderToMoveTo);
     } else {
-      handleMoveDocument(item.id, folderId);
+      handleMoveDocument(item as Document, folderToMoveTo);
     }
   };
 
@@ -113,15 +113,13 @@ function MoveItemModal(props: MoveItemModalProps) {
                   <span>{folder.name}</span>
                 </div>
                 {showMoveBtn === folder.id && (
-                  <button onClick={() => handleMoveClick(folder.id)}>
-                    move
-                  </button>
+                  <button onClick={() => handleMoveClick(folder)}>move</button>
                 )}
               </div>
             );
           })}
         </div>
-        <button onClick={() => handleMoveClick(peek().id)}>Place</button>
+        <button>Place</button>
       </div>
     </ModalContWrapper>
   );

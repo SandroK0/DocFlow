@@ -67,7 +67,7 @@ def create_folder():
 @folders_bp.route('/', methods=['GET'])
 @folders_bp.route('/<int:folder_id>', methods=['GET'])
 @jwt_required()
-def get_folder_contents(folder_id=None):
+def get_folder(folder_id=None):
     current_user_id = get_jwt_identity()
     current_user_id = int(current_user_id)
 
@@ -145,16 +145,28 @@ def update_folder(folder_id):
         return jsonify({"msg": "User not found"}), 404
 
     folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
-
     if not folder:
         return jsonify({"message": "Folder not found"}), 404
 
     data = request.get_json()
 
-    folder.name = data.get('name', folder.name)
-    folder.parent_id = data.get('parent_id', folder.parent_id)
+    new_name = data.get('name', folder.name)
+    new_parent_id = data.get('parent_id', folder.parent_id)
+
+    # Check for duplicate folder names in the new parent folder
+    duplicate_folder = Folder.query.filter_by(
+        name=new_name,
+        parent_id=new_parent_id,
+        user_id=user.id
+    ).filter(Folder.id != folder_id).first()
+
+    if duplicate_folder:
+        return jsonify({"message": "A folder with the same name already exists in the target folder."}), 400
+
+    # Update folder details
+    folder.name = new_name
+    folder.parent_id = new_parent_id
 
     db.session.commit()
 
     return jsonify({"msg": "Folder updated successfully"}), 200
-

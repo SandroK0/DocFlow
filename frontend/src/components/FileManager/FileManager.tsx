@@ -2,12 +2,22 @@ import { useFileManager } from "./useFileManager";
 import Actions from "./Actions";
 import ItemList from "./ItemList";
 import Path from "./Path";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function FileManager() {
-  const { folderHistory, goBack, handlePathClick } = useFileManager();
+  const { folderHistory, goBack, handlePathClick, toastMsg, setToastMsg } =
+    useFileManager();
 
   const [view, setView] = useState<"Grid" | "List">("List");
+
+  useEffect(() => {
+    if (toastMsg) {
+      toast(toastMsg, {
+        onClose: () => setToastMsg(null),
+      });
+    }
+  }, [toastMsg]);
 
   return (
     <div
@@ -18,6 +28,20 @@ export default function FileManager() {
         width: "80%",
       }}
     >
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+        style={{fontFamily: "sans-serif"}}
+      />
       <Actions
         onGoBack={goBack}
         disableGoBack={folderHistory.length === 1}

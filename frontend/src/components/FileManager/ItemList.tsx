@@ -18,7 +18,6 @@ export default function ItemList(props: ItemListProps) {
   useEffect(() => {
     setShowOptions(null);
   }, [currentContent]);
-  console.log(view);
   return (
     <div className={view === "List" ? styles.listView : styles.gridView}>
       {currentContent &&

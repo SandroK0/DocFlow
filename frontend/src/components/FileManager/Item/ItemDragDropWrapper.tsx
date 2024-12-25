@@ -10,8 +10,11 @@ const ItemType = {
 interface ItemDragDropWrapperProps {
   item: Folder | Document;
   isFolder: boolean;
-  handleMoveDocument: (docId: number, folderId: number) => void;
-  handleMoveFolder: (folderId: number, targetFolderId: number) => void;
+  handleMoveDocument: (
+    documentToMove: Document,
+    folderToMoveTo: Folder,
+  ) => void;
+  handleMoveFolder: (folderToMove: Folder, folderToMoveTo: Folder) => void;
   children: ReactNode;
 }
 
@@ -24,7 +27,7 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
 }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: isFolder ? ItemType.FOLDER : ItemType.DOCUMENT,
-    item: { id: item.id, type: isFolder ? ItemType.FOLDER : ItemType.DOCUMENT },
+    item: { item: item, type: isFolder ? ItemType.FOLDER : ItemType.DOCUMENT },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -32,16 +35,16 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
 
   const [, drop] = useDrop({
     accept: [ItemType.FOLDER, ItemType.DOCUMENT],
-    drop: (draggedItem: { id: number; type: string }) => {
+    drop: (draggedItem: { item: Document | Folder; type: string }) => {
       if (draggedItem.type === ItemType.DOCUMENT) {
-        handleMoveDocument(draggedItem.id, item.id);
-        console.log(draggedItem.id, item.id);
+        handleMoveDocument(draggedItem.item as Document, item as Folder);
+        console.log(draggedItem.item.id, item.id);
       } else if (
         draggedItem.type === ItemType.FOLDER &&
-        draggedItem.id !== item.id
+        draggedItem.item.id !== item.id
       ) {
-        handleMoveFolder(draggedItem.id, item.id);
-        console.log(draggedItem.id, item.id);
+        handleMoveFolder(draggedItem.item as Folder, item as Folder);
+        console.log(draggedItem.item.id, item.id);
       }
     },
     canDrop: () => isFolder,

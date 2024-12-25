@@ -73,10 +73,16 @@ class Folder(db.Model):
         return f'<Folder {self.name}>'
 
     def to_dict(self):
+        """Convert the folder to a dictionary including immediate subfolders and documents."""
         return {
             "id": self.id,
             "name": self.name,
             "parent_id": self.parent_id,
             "user_id": self.user_id,
             "is_empty": self.is_empty,
+            "subfolders": [
+                {"id": child.id, "name": child.name, "is_empty": child.is_empty}
+                for child in self.children
+            ],
+            "documents": [document.to_dict() for document in self.documents]
         }

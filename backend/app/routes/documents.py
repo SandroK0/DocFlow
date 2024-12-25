@@ -76,7 +76,6 @@ def get_document(id):
     return jsonify(document.to_dict()), 200
 
 
-# Update a document route
 @documents_bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_document(id):
@@ -84,16 +83,35 @@ def update_document(id):
     current_user_id = int(current_user_id)
 
     user = User.query.get(current_user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
     document = Document.query.get(id)
     if not document:
         return jsonify({"msg": "Document not found"}), 404
+
     if document.user_id != user.id:
         return jsonify({"msg": "You do not have permission to edit this document"}), 403
+
     data = request.get_json()
 
-    document.title = data.get('title', document.title)
+    new_title = data.get('title', document.title)
+    new_folder_id = data.get('folder_id', document.folder_id)
+
+    # Check for duplicate document titles in the target folder
+    duplicate_document = Document.query.filter_by(
+        title=new_title,
+        folder_id=new_folder_id,
+        user_id=user.id
+    ).filter(Document.id != id).first()
+
+    if duplicate_document:
+        return jsonify({"message": "A document with the same title already exists in the target folder."}), 400
+
+    # Update document details
+    document.title = new_title
     document.content = data.get('content', document.content)
-    document.folder_id = data.get('folder_id', document.folder_id)
+    document.folder_id = new_folder_id
 
     db.session.commit()
     return jsonify({"msg": "Document updated successfully"}), 200
@@ -107,6 +125,10 @@ def delete_document(id):
     current_user_id = int(current_user_id)
 
     user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
     document = Document.query.get(id)
     if not document:
         return jsonify({"msg": "Document not found"}), 404
