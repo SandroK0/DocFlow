@@ -1,4 +1,5 @@
 import { AiOutlineHome } from "react-icons/ai"; // Importing home icon
+import { RiArrowRightSLine } from "react-icons/ri";
 import styles from "../../styles/FileManager/Path.module.css";
 
 interface FolderHistoryItem {
@@ -15,24 +16,21 @@ export default function Path(props: PathProps) {
   const { folderHistory, handlePathClick } = props;
   return (
     <nav className={styles.Path} aria-label="Breadcrumb">
-      <div className={styles.Breadcrumb} onClick={() => handlePathClick(-1)}>
-        <span
-          className={styles.Crumb}
-          role="button"
-          tabIndex={0}
-          aria-label="Navigate to home"
-        >
-          <AiOutlineHome />
-        </span>
+      <div
+        className={`${styles.Breadcrumb} ${
+          folderHistory.length === 0 ? styles.ActiveCrumb : styles.Crumb
+        }`}
+        onClick={() => handlePathClick(-1)}
+        role="button"
+        tabIndex={0}
+        aria-label="Navigate to home"
+      >
+        <AiOutlineHome />
       </div>
 
       {folderHistory.map((node, index) => (
         <div className={styles.Breadcrumb} key={node.id}>
-          {index >= 0 && (
-            <span className={styles.Separator} aria-hidden="true">
-              &gt;
-            </span>
-          )}
+          {index >= 0 && <RiArrowRightSLine size={25} />}
           <span
             className={
               index === folderHistory.length - 1

@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_URL } from "../config";
 
 // Helper to get token from localStorage
-const getAuthHeaders = () => ({
+export const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("jwt")}`,
 });
 

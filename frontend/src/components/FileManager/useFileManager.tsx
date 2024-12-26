@@ -213,7 +213,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    refetchContent();
+      refetchContent();
   }, [folderHistory]);
 
   return (

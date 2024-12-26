@@ -37,9 +37,8 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
     void,
     { isDragging: boolean }
   >(() => ({
-    type: isFolder ? ItemType.FOLDER : ItemType.DOCUMENT, // Type for DnD
+    type: isFolder ? ItemType.FOLDER : ItemType.DOCUMENT,
     item: () => {
-      // Log the item being dragged
       console.log("Dragging item:", item);
       return { item, type: isFolder ? ItemType.FOLDER : ItemType.DOCUMENT };
     },
@@ -50,7 +49,7 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
 
   // useDrop hook for droppable behavior
   const [, drop] = useDrop<DraggedItem>({
-    accept: [ItemType.FOLDER, ItemType.DOCUMENT], // Accept folders and documents
+    accept: [ItemType.FOLDER, ItemType.DOCUMENT],
     drop: (draggedItem: DraggedItem) => {
       if (draggedItem.type === ItemType.DOCUMENT) {
         handleMoveDocument(draggedItem.item as Document, item as Folder);
