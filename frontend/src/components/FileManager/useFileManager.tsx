@@ -22,27 +22,25 @@ interface ContentType {
   folders: Folder[];
 }
 
-interface FolderHistoryItem {
-  id: number;
-  name: string;
-}
-
 interface FileManagerContextType {
   currentContent: ContentType | null;
   refetchContent: () => void;
-  folderHistory: FolderHistoryItem[];
+  folderHistory: Folder[];
   handleCreateFolder: (name: string) => Promise<void>;
   handleDeleteFolder: (id: number) => Promise<void>;
-  handleMoveFolder: (folderToMove: Folder, folderToMoveTo: Folder) => void;
+  handleMoveFolder: (
+    folderToMove: Folder,
+    folderToMoveTo: Folder | null
+  ) => void;
   handleRenameFolder: (id: number, new_name: string) => void;
   handleCreateDocument: (title: string) => Promise<void>;
   handleDeleteDocument: (id: number) => Promise<void>;
   handleMoveDocument: (
     documentToMove: Document,
-    folderToMoveTo: Folder
+    folderToMoveTo: Folder | null
   ) => void;
   handleRenameDocument: (id: number, new_title: string) => void;
-  goToFolder: (folderId: number, folderName: string) => void;
+  goToFolder: (folder: Folder) => void;
   goBack: () => void;
   getPath: () => string;
   handlePathClick: (folder_id: number) => void;
@@ -60,16 +58,17 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentContent, setCurrentContent] = useState<ContentType | null>(
     null
   );
-  const [folderHistory, setFolderHistory] = useState<FolderHistoryItem[]>([
-    { id: -1, name: "home" },
-  ]);
+  const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  const peek = () => folderHistory[folderHistory.length - 1];
+  const peek = () =>
+    folderHistory[folderHistory.length - 1]
+      ? folderHistory[folderHistory.length - 1]
+      : null;
 
-  const goToFolder = (folderId: number, folderName: string) => {
-    setFolderHistory((prev) => [...prev, { id: folderId, name: folderName }]);
+  const goToFolder = (folder: Folder) => {
+    setFolderHistory((prev) => [...prev, folder]);
   };
 
   const handlePathClick = (nodeId: number) => {
@@ -90,17 +89,16 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const goBack = () => {
-    setFolderHistory((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
+    setFolderHistory((prev) => (prev.length >= 1 ? prev.slice(0, -1) : prev));
   };
 
   const handleCreateFolder = async (name: string) => {
-    const { id: parentId } = peek();
+    const folder = peek();
     try {
-      await createFolder(name, parentId === -1 ? null : parentId);
+      await createFolder(name, folder ? folder.id : null);
       refetchContent();
-    } catch (err) {
-      console.error("Error creating folder:", err);
-      setToastMsg("Error creating folder");
+    } catch (err: any) {
+      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
     }
   };
 
@@ -108,36 +106,35 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await deleteFolder(folder_id);
       refetchContent();
-    } catch (err) {
-      console.log("Error deleting folder:", err);
-      setToastMsg("Error deleting folder");
+    } catch (err: any) {
+      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
     }
   };
   const handleMoveFolder = async (
     folderToMove: Folder,
-    folderToMoveTo: Folder
+    folderToMoveTo: Folder | null
   ) => {
-    // Check if a subfolder with the same name already exists
-    const duplicateFolder = folderToMoveTo.subfolders.some(
-      (subfolder) => subfolder.name === folderToMove.name
-    );
+    const duplicateFolder =
+      folderToMoveTo &&
+      folderToMoveTo.subfolders.some(
+        (subfolder) => subfolder.name === folderToMove.name
+      );
 
     if (duplicateFolder) {
       setToastMsg(
         `Cannot move folder: A folder named "${folderToMove.name}" already exists in the target folder.`
       );
-      return; // Exit without making the update
+      return;
     }
 
     try {
       await updateFolder(
         folderToMove.id,
-        folderToMoveTo.id === -1 ? null : folderToMoveTo.id
+        folderToMoveTo === null ? null : folderToMoveTo.id
       );
       refetchContent();
-      console.log(`Folder "${folderToMove.name}" moved successfully.`);
-    } catch (error) {
-      console.error("Error moving folder:", error);
+    } catch (err: any) {
+      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
     }
   };
 
@@ -146,7 +143,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await updateFolder(id, undefined, new_name);
       refetchContent();
     } catch (error: any) {
-      setToastMsg("Cannot rename Folder:", error.response.data.message);
+      setToastMsg(`Cannot rename Folder: ${error.response.data.message}`);
     }
   };
 
@@ -154,18 +151,20 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await deleteDocument(id);
       refetchContent();
-    } catch (err) {
-      console.error("Error deleting document:", err);
+    } catch (err: any) {
+      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
     }
   };
 
   const handleMoveDocument = async (
     documentToMove: Document,
-    folderToMoveTo: Folder
+    folderToMoveTo: Folder | null
   ) => {
-    const duplicateDocument = folderToMoveTo.documents.some(
-      (doc) => doc.title === documentToMove.title
-    );
+    const duplicateDocument =
+      folderToMoveTo &&
+      folderToMoveTo.documents.some(
+        (doc) => doc.title === documentToMove.title
+      );
 
     if (duplicateDocument) {
       setToastMsg(
@@ -179,24 +178,21 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
         documentToMove.id,
         undefined,
         undefined,
-        folderToMoveTo.id === -1 ? null : folderToMoveTo.id
+        folderToMoveTo === null ? null : folderToMoveTo.id
       );
-
-      console.log(`Document "${documentToMove.title}" moved successfully.`);
       refetchContent();
-    } catch (error) {
-      console.error("Error moving document:", error);
+    } catch (err: any) {
+      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
     }
   };
 
   const handleCreateDocument = async (title: string) => {
-    const { id: folderId } = peek();
+    const folder = peek();
     try {
-      await createDocument(title, folderId === -1 ? null : folderId);
+      await createDocument(title, folder  ? folder.id : null);
       refetchContent();
-    } catch (err) {
-      console.error("Error creating document:", err);
-      setToastMsg("Error creating document");
+    } catch (err: any) {
+      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
     }
   };
 
@@ -205,12 +201,12 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await updateDocument(id, new_title, undefined, undefined);
       refetchContent();
     } catch (error: any) {
-      setToastMsg("Cannot rename Document:", error.response.data.message);
+      setToastMsg(`Cannot rename document: ${error.response.data.message}`);
     }
   };
 
   const refetchContent = () => {
-    const currentFolderId = peek().id === -1 ? null : peek().id;
+    const currentFolderId = peek() != null ? peek()?.id ?? null : null;
     fetchFolderContent(currentFolderId)
       .then((data) => setCurrentContent(data))
       .catch((err) => console.error("Error fetching folder content:", err));
@@ -247,7 +243,6 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-// Hook to use the context
 export const useFileManager = (): FileManagerContextType => {
   const context = useContext(FileManagerContext);
   if (context === undefined) {

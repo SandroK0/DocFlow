@@ -18,6 +18,7 @@ export default function ItemList(props: ItemListProps) {
   useEffect(() => {
     setShowOptions(null);
   }, [currentContent]);
+
   return (
     <div className={view === "List" ? styles.listView : styles.gridView}>
       {currentContent &&
@@ -27,14 +28,14 @@ export default function ItemList(props: ItemListProps) {
             return (
               <Item
                 item={item}
-                key={indx}
+                key={`${item.id}-${isFolder ? "folder" : "document"}`}
                 isFolder={isFolder}
                 setShowOptions={setShowOptions}
                 indx={indx}
                 showOptions={showOptions}
               />
             );
-          },
+          }
         )}
     </div>
   );

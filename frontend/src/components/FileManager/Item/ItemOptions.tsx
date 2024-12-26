@@ -61,7 +61,7 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
                     setRnInputValue(
                       isFolder
                         ? (item as Folder).name
-                        : (item as Document).title,
+                        : (item as Document).title
                     );
                     setRenaming(true);
                   }}
@@ -87,7 +87,7 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
             isFolder={isFolder}
             closeModal={() => setModal(null)}
           />,
-          document.body, // Render in the root of the document
+          document.body
         )}
       {modal === "Move" &&
         ReactDOM.createPortal(
@@ -96,7 +96,7 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
             isFolder={isFolder}
             closeModal={() => setModal(null)}
           />,
-          document.body, // Render in the root of the document
+          document.body
         )}
     </>
   );

@@ -12,12 +12,6 @@ interface MoveItemModalProps {
   isFolder: boolean;
   closeModal: () => void;
 }
-
-interface FolderHistoryItem {
-  id: number;
-  name: string;
-}
-
 interface ContentType {
   folders: Folder[];
 }
@@ -27,11 +21,9 @@ function MoveItemModal(props: MoveItemModalProps) {
   const { item, isFolder, closeModal } = props;
   const [showMoveBtn, setShowMoveBtn] = useState<number | null>(null);
   const [currentFolders, setCurrentFolders] = useState<ContentType | null>(
-    null,
+    null
   );
-  const [folderHistory, setFolderHistory] = useState<FolderHistoryItem[]>([
-    { id: -1, name: "" },
-  ]);
+  const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
 
   const handlePathClick = (nodeId: number) => {
     let newFolderHistory = [...folderHistory];
@@ -46,17 +38,20 @@ function MoveItemModal(props: MoveItemModalProps) {
     setFolderHistory(newFolderHistory);
   };
 
-  const peek = () => folderHistory[folderHistory.length - 1];
+  const peek = () =>
+    folderHistory[folderHistory.length - 1]
+      ? folderHistory[folderHistory.length - 1]
+      : null;
 
-  const goToFolder = (folderId: number, folderName: string) => {
-    setFolderHistory((prev) => [...prev, { id: folderId, name: folderName }]);
+  const goToFolder = (folder: Folder) => {
+    setFolderHistory((prev) => [...prev, folder]);
   };
 
   const goBack = () => {
     setFolderHistory((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
   };
 
-  const handleMoveClick = (folderToMoveTo: Folder) => {
+  const handleMoveClick = (folderToMoveTo: Folder | null) => {
     if (isFolder) {
       handleMoveFolder(item as Folder, folderToMoveTo);
     } else {
@@ -69,7 +64,7 @@ function MoveItemModal(props: MoveItemModalProps) {
     : { name: (item as Document).title };
 
   const refetchContent = () => {
-    const currentFolderId = peek().id === -1 ? null : peek().id;
+    const currentFolderId = peek() != null ? peek()?.id ?? null : null;
     fetchFolderContent(currentFolderId)
       .then((data) => {
         setCurrentFolders(data);
@@ -90,7 +85,9 @@ function MoveItemModal(props: MoveItemModalProps) {
         <h3>
           Moving {isFolder ? "folder" : "document"} named: {name}
         </h3>
-        <button onClick={() => goBack()}>Back</button>
+        <button onClick={() => goBack()} disabled={folderHistory.length === 0}>
+          Back
+        </button>
         <Path
           folderHistory={folderHistory}
           handlePathClick={handlePathClick}
@@ -106,7 +103,7 @@ function MoveItemModal(props: MoveItemModalProps) {
                 className={styles.folder}
                 onMouseEnter={() => setShowMoveBtn(folder.id)}
                 onMouseLeave={() => setShowMoveBtn(null)}
-                onClick={() => goToFolder(folder.id, folder.name)}
+                onClick={() => goToFolder(folder)}
               >
                 <div className={styles.folderContent}>
                   <FaFolder />
@@ -119,7 +116,7 @@ function MoveItemModal(props: MoveItemModalProps) {
             );
           })}
         </div>
-        <button>Place</button>
+        <button onClick={() => handleMoveClick(peek())}>Place</button>
       </div>
     </ModalContWrapper>
   );

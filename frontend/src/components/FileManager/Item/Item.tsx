@@ -47,9 +47,7 @@ const Item: React.FC<ItemProps> = ({
       <div
         className={styles.itemContainer}
         onClick={() =>
-          isFolder
-            ? goToFolder(item.id, (item as Folder).name)
-            : navigateToEdit(item.id)
+          isFolder ? goToFolder(item as Folder) : navigateToEdit(item.id)
         }
       >
         <div className={`${styles.item}`}>

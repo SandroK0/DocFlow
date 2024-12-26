@@ -17,11 +17,12 @@ def create_folder():
     user = User.query.get(current_user_id)
 
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     # Get folder data from request
     data = request.get_json()
     folder_name = data.get('name')
+    
     # Default to None for root folder
     parent_id = data.get('parent_id', None)
 
@@ -74,7 +75,7 @@ def get_folder(folder_id=None):
     user = User.query.get(current_user_id)
 
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     if folder_id is None:
         # Fetch root-level folders and documents
@@ -110,7 +111,7 @@ def delete_folder(folder_id):
     user = User.query.get(current_user_id)
 
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
 
@@ -142,7 +143,7 @@ def update_folder(folder_id):
 
     user = User.query.get(current_user_id)
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
     if not folder:
@@ -169,4 +170,4 @@ def update_folder(folder_id):
 
     db.session.commit()
 
-    return jsonify({"msg": "Folder updated successfully"}), 200
+    return jsonify({"message": "Folder updated successfully"}), 200

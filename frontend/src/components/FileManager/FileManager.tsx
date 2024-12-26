@@ -40,11 +40,11 @@ export default function FileManager() {
         pauseOnHover
         theme="light"
         transition={Bounce}
-        style={{fontFamily: "sans-serif"}}
+        style={{ fontFamily: "monospace" }}
       />
       <Actions
         onGoBack={goBack}
-        disableGoBack={folderHistory.length === 1}
+        disableGoBack={folderHistory.length === 0}
         view={view}
         setView={setView}
       />

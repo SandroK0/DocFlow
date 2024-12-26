@@ -16,7 +16,7 @@ def create_document():
     user = User.query.get(current_user_id)
 
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     data = request.get_json()
 
@@ -25,7 +25,7 @@ def create_document():
     folder_id = data.get("folder_id")
 
     if not title:
-        return jsonify({"msg": "Title and content are required"}), 400
+        return jsonify({"message": "Title and content are required"}), 400
 
     # Create the document
     document = Document(title=title,
@@ -44,13 +44,13 @@ def create_document():
         # If no duplicates, add the document
         db.session.add(document)
         db.session.commit()
-        return jsonify({"msg": "Document created successfully", "document_id": document.id}), 201
+        return jsonify({"message": "Document created successfully", "document_id": document.id}), 201
     except ValueError as e:
         # Return the error message for duplicates
-        return jsonify({"msg": str(e)}), 400
+        return jsonify({"message": str(e)}), 400
     except Exception as e:
         db.session.rollback()  # Rollback in case of any other error
-        return jsonify({"msg": "Failed to create document", "error": str(e)}), 500
+        return jsonify({"message": "Failed to create document", "error": str(e)}), 500
 
 
 # Get a document by ID route
@@ -64,14 +64,11 @@ def get_document(id):
 
     # Check if the document exists
     if not document:
-        return jsonify({"msg": "Document not found"}), 404
+        return jsonify({"message": "Document not found"}), 404
 
-    print("document id", id)
-    print("current user id:", current_user_id)
-    print("document.user_id", document.user_id)
     # Ensure the document belongs to the current user
     if document.user_id != current_user_id:
-        return jsonify({"msg": "You are not authorized to view this document"}), 403
+        return jsonify({"message": "You are not authorized to view this document"}), 403
 
     return jsonify(document.to_dict()), 200
 
@@ -84,14 +81,14 @@ def update_document(id):
 
     user = User.query.get(current_user_id)
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     document = Document.query.get(id)
     if not document:
-        return jsonify({"msg": "Document not found"}), 404
+        return jsonify({"message": "Document not found"}), 404
 
     if document.user_id != user.id:
-        return jsonify({"msg": "You do not have permission to edit this document"}), 403
+        return jsonify({"message": "You do not have permission to edit this document"}), 403
 
     data = request.get_json()
 
@@ -114,7 +111,7 @@ def update_document(id):
     document.folder_id = new_folder_id
 
     db.session.commit()
-    return jsonify({"msg": "Document updated successfully"}), 200
+    return jsonify({"message": "Document updated successfully"}), 200
 
 
 # Delete a document route
@@ -127,14 +124,14 @@ def delete_document(id):
     user = User.query.get(current_user_id)
 
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     document = Document.query.get(id)
     if not document:
-        return jsonify({"msg": "Document not found"}), 404
+        return jsonify({"message": "Document not found"}), 404
     if document.user_id != user.id:
-        return jsonify({"msg": "You do not have permission to delete this document"}), 403
+        return jsonify({"message": "You do not have permission to delete this document"}), 403
 
     db.session.delete(document)
     db.session.commit()
-    return jsonify({"msg": "Document deleted successfully"}), 200
+    return jsonify({"message": "Document deleted successfully"}), 200

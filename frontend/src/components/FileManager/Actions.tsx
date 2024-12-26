@@ -13,7 +13,6 @@ interface ActionsProps {
 export default function Actions({
   onGoBack,
   disableGoBack,
-  view,
   setView,
 }: ActionsProps) {
   const [modal, setModal] = useState<"New" | null>(null);

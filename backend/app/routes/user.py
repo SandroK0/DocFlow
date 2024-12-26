@@ -15,13 +15,13 @@ def register():
     email = data.get('email')
     password = data.get('password')
     if User.query.filter_by(username=username).first():
-        return jsonify({"msg": "Username already exists"}), 400
+        return jsonify({"message": "Username already exists"}), 400
     user = User(username=username, email=email)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
 
-    return jsonify({"msg": "User created"}), 201
+    return jsonify({"message": "User created"}), 201
 
 
 # Login route
@@ -35,7 +35,7 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if not user or not user.check_password(password):
-        return jsonify({"msg": "Invalid credentials"}), 401
+        return jsonify({"message": "Invalid credentials"}), 401
 
     # Create JWT token with user ID as the subject (identity)
     access_token = create_access_token(
