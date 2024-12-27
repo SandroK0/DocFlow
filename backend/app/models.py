@@ -1,10 +1,26 @@
 from app import db
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
 from flask_jwt_extended import JWTManager
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 
-# User model with JWT auth
+def format_size(bytes_size):
+    """
+    Format size to the most appropriate unit.
+    Returns tuple of (numeric_value, unit)
+    """
+    units = ['B', 'KB', 'MB', 'GB', 'TB']
+    size = float(bytes_size)
+    unit_index = 0
+
+    while size >= 1024 and unit_index < len(units) - 1:
+        size /= 1024
+        unit_index += 1
+
+    return round(size, 2), units[unit_index]
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -13,6 +29,9 @@ class User(db.Model):
 
     documents = db.relationship('Document', backref='user', lazy=True)
     folders = db.relationship('Folder', backref='user', lazy=True)
+
+    MAX_STORAGE_MB = 48  # Maximum storage allowed for each user in MB
+    MAX_STORAGE_BYTES = 48 * 1024 * 1024  # Convert MB to bytes
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -23,12 +42,54 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
+    @property
+    def total_storage_used(self):
+        """Calculate total storage used by user's documents in bytes."""
+        return sum(len(doc.content.encode('utf-8')) if doc.content else 0
+                   for doc in self.documents)
+
+    @property
+    def formatted_storage_used(self):
+        """Return storage used with appropriate unit."""
+        value, unit = format_size(self.total_storage_used)
+        return f"{value} {unit}"
+
+    @property
+    def formatted_storage_remaining(self):
+        """Return remaining storage with appropriate unit."""
+        remaining_bytes = self.MAX_STORAGE_BYTES - self.total_storage_used
+        value, unit = format_size(remaining_bytes)
+        return f"{value} {unit}"
+
+    @property
+    def storage_summary(self):
+        """Return complete storage summary."""
+        return {
+            "used": self.formatted_storage_used,
+            "remaining": self.formatted_storage_remaining,
+            "total": f"{self.MAX_STORAGE_MB} MB",
+            "percentage_used": round((self.total_storage_used / self.MAX_STORAGE_BYTES) * 100, 2)
+        }
+
+    def has_storage_space(self, new_content):
+        """Check if user has enough storage space for new content."""
+        new_size = len(new_content.encode('utf-8')) if new_content else 0
+        return (self.total_storage_used + new_size) <= self.MAX_STORAGE_BYTES
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "storage_summary": self.storage_summary
+        }
+
 
 # Document model for storing rich text documents (HTML content)
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    content = db.Column(db.Text, nullable=True)
+    content = db.Column(MEDIUMTEXT, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

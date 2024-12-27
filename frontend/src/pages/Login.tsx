@@ -18,7 +18,7 @@ const Login: React.FC = () => {
         password,
       })
       .then((resp) => {
-        console.log(resp.data.access_token);
+        console.log(resp.data);
         const accessToken = resp.data.access_token;
         if (accessToken) {
           localStorage.setItem("jwt", accessToken);

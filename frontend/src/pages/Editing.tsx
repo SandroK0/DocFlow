@@ -4,13 +4,23 @@ import { useEffect, useState } from "react";
 import { Document } from "../Types";
 import styles from "../styles/Editing.module.css";
 import { getDocument, updateDocument } from "../services/apiService";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function Editing() {
   const { docId } = useParams<{ docId: string }>();
   const [prevDocumentState, setPrevDocumentState] = useState<Document | null>(
-    null,
+    null
   );
   const [document, setDocument] = useState<Document | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (toastMsg) {
+      toast(toastMsg, {
+        onClose: () => setToastMsg(null),
+      });
+    }
+  }, [toastMsg]);
 
   async function handleSave() {
     try {
@@ -19,12 +29,13 @@ export default function Editing() {
           document.id,
           document.title,
           document.content,
-          document.folder_id,
+          document.folder_id
         );
         setPrevDocumentState(document);
       }
-    } catch (err) {
-      console.log("Error while saving document.", err);
+    } catch (err: any) {
+      console.log("Error while saving document.", err.response.data.message);
+      setToastMsg(`Error while saving document: ${err.response.data.message}`);
     }
   }
 
@@ -55,22 +66,44 @@ export default function Editing() {
   }, []);
 
   return (
-    <div className={styles.Editing}>
-      <div className={styles.header}>
-        <input
-          value={document?.title}
-          onChange={(e) => handleInpChange(e.target.value)}
-          style={{ fontSize: "30px", border: "None" }}
-        />
-        <button onClick={handleSave} disabled={prevDocumentState === document}>
-          Save
-        </button>
+    <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+        style={{ fontFamily: "monospace" }}
+      />
+      <div className={styles.Editing}>
+        <div className={styles.header}>
+          <input
+            value={document?.title}
+            onChange={(e) => handleInpChange(e.target.value)}
+            style={{ fontSize: "30px", border: "None" }}
+          />
+          <button
+            onClick={handleSave}
+            disabled={prevDocumentState === document}
+          >
+            Save
+          </button>
+        </div>
+        <main>
+          {document && (
+            <Editor
+              value={document.content}
+              handleChange={handleChange}
+            ></Editor>
+          )}
+        </main>
       </div>
-      <main>
-        {document && (
-          <Editor value={document.content} handleChange={handleChange}></Editor>
-        )}
-      </main>
-    </div>
+    </>
   );
 }

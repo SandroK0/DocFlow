@@ -14,6 +14,7 @@ import {
   deleteDocument,
   updateDocument,
   updateFolder,
+  getUserStorageInfo,
 } from "../../services/apiService";
 import { Folder, Document } from "../../Types";
 
@@ -22,7 +23,16 @@ interface ContentType {
   folders: Folder[];
 }
 
+interface Storage {
+  percentage_used: number;
+  remaining: string;
+  total: string;
+  used: string;
+}
+
 interface FileManagerContextType {
+  storageState: Storage | null;
+  setStorageState: Dispatch<SetStateAction<Storage | null>>;
   currentContent: ContentType | null;
   refetchContent: () => void;
   folderHistory: Folder[];
@@ -30,14 +40,14 @@ interface FileManagerContextType {
   handleDeleteFolder: (id: number) => Promise<void>;
   handleMoveFolder: (
     folderToMove: Folder,
-    folderToMoveTo: Folder | null
+    folderToMoveTo: Folder | null,
   ) => void;
   handleRenameFolder: (id: number, new_name: string) => void;
   handleCreateDocument: (title: string) => Promise<void>;
   handleDeleteDocument: (id: number) => Promise<void>;
   handleMoveDocument: (
     documentToMove: Document,
-    folderToMoveTo: Folder | null
+    folderToMoveTo: Folder | null,
   ) => void;
   handleRenameDocument: (id: number, new_title: string) => void;
   goToFolder: (folder: Folder) => void;
@@ -49,18 +59,20 @@ interface FileManagerContextType {
 }
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [currentContent, setCurrentContent] = useState<ContentType | null>(
-    null
+    null,
   );
   const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const [storageState, setStorageState] = useState<Storage | null>(null);
 
   const peek = () =>
     folderHistory[folderHistory.length - 1]
@@ -112,17 +124,17 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const handleMoveFolder = async (
     folderToMove: Folder,
-    folderToMoveTo: Folder | null
+    folderToMoveTo: Folder | null,
   ) => {
     const duplicateFolder =
       folderToMoveTo &&
       folderToMoveTo.subfolders.some(
-        (subfolder) => subfolder.name === folderToMove.name
+        (subfolder) => subfolder.name === folderToMove.name,
       );
 
     if (duplicateFolder) {
       setToastMsg(
-        `Cannot move folder: A folder named "${folderToMove.name}" already exists in the target folder.`
+        `Cannot move folder: A folder named "${folderToMove.name}" already exists in the target folder.`,
       );
       return;
     }
@@ -130,7 +142,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await updateFolder(
         folderToMove.id,
-        folderToMoveTo === null ? null : folderToMoveTo.id
+        folderToMoveTo === null ? null : folderToMoveTo.id,
       );
       refetchContent();
     } catch (err: any) {
@@ -158,17 +170,17 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleMoveDocument = async (
     documentToMove: Document,
-    folderToMoveTo: Folder | null
+    folderToMoveTo: Folder | null,
   ) => {
     const duplicateDocument =
       folderToMoveTo &&
       folderToMoveTo.documents.some(
-        (doc) => doc.title === documentToMove.title
+        (doc) => doc.title === documentToMove.title,
       );
 
     if (duplicateDocument) {
       setToastMsg(
-        `Cannot move document: A document named "${documentToMove.title}" already exists in the target folder.`
+        `Cannot move document: A document named "${documentToMove.title}" already exists in the target folder.`,
       );
       return;
     }
@@ -178,7 +190,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
         documentToMove.id,
         undefined,
         undefined,
-        folderToMoveTo === null ? null : folderToMoveTo.id
+        folderToMoveTo === null ? null : folderToMoveTo.id,
       );
       refetchContent();
     } catch (err: any) {
@@ -189,7 +201,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleCreateDocument = async (title: string) => {
     const folder = peek();
     try {
-      await createDocument(title, folder  ? folder.id : null);
+      await createDocument(title, folder ? folder.id : null);
       refetchContent();
     } catch (err: any) {
       setToastMsg(`Error deleting folder: ${err.response.data.message}`);
@@ -206,19 +218,28 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const refetchContent = () => {
-    const currentFolderId = peek() != null ? peek()?.id ?? null : null;
+    const currentFolderId = peek() != null ? (peek()?.id ?? null) : null;
     fetchFolderContent(currentFolderId)
       .then((data) => setCurrentContent(data))
       .catch((err) => console.error("Error fetching folder content:", err));
   };
 
+  const getStorageInfo = async () => {
+    getUserStorageInfo()
+      .then((data) => setStorageState(data.storage))
+      .catch((err) => console.error("Error fetching storage info:", err));
+  };
+
   useEffect(() => {
-      refetchContent();
+    refetchContent();
+    getStorageInfo();
   }, [folderHistory]);
 
   return (
     <FileManagerContext.Provider
       value={{
+        storageState,
+        setStorageState,
         currentContent,
         refetchContent,
         folderHistory,

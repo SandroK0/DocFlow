@@ -1,6 +1,7 @@
 import { useFileManager } from "./useFileManager";
 import Actions from "./Actions";
 import ItemList from "./ItemList";
+import Storage from "./Storage";
 import Path from "./Path";
 import { useEffect, useState } from "react";
 import { Bounce, toast, ToastContainer } from "react-toastify";
@@ -50,6 +51,7 @@ export default function FileManager() {
       />
       <Path folderHistory={folderHistory} handlePathClick={handlePathClick} />
       <ItemList view={view} setView={setView} />
+      <Storage></Storage>
     </div>
   );
 }

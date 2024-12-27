@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app import db
 from datetime import timedelta
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from app.models import User
 
 user_bp = Blueprint('user', __name__)
@@ -41,4 +41,21 @@ def login():
     access_token = create_access_token(
         identity=str(user.id), expires_delta=timedelta(days=1)
     )
-    return jsonify(access_token=access_token), 200
+    return jsonify({"access_token": access_token, "user": user.to_dict()}), 200
+
+
+@user_bp.route('/storage_info', methods=['GET'])
+@jwt_required()
+def get_user_storage_info():
+
+    current_user_id = get_jwt_identity()
+    current_user_id = int(current_user_id)
+
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    return jsonify({
+        "storage": user.storage_summary
+    }), 200
