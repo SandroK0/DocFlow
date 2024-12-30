@@ -82,27 +82,24 @@ export default function Editing() {
         style={{ fontFamily: "monospace" }}
       />
       <div className={styles.Editing}>
-        <div className={styles.header}>
-          <input
-            value={document?.title}
-            onChange={(e) => handleInpChange(e.target.value)}
-            style={{ fontSize: "30px", border: "None" }}
-          />
-          <button
-            onClick={handleSave}
-            disabled={prevDocumentState === document}
-          >
-            Save
-          </button>
-        </div>
-        <main>
-          {document && (
-            <Editor
-              value={document.content}
-              handleChange={handleChange}
-            ></Editor>
-          )}
-        </main>
+        <input
+          value={document?.title}
+          className={styles.title}
+          onChange={(e) => handleInpChange(e.target.value)}
+        />
+        <button
+          onClick={handleSave}
+          disabled={prevDocumentState === document}
+          className={styles.saveBtn}
+        >
+          Save
+        </button>
+        {document && (
+          <Editor
+            value={document.content}
+            handleChange={handleChange}
+          ></Editor>
+        )}
       </div>
     </>
   );

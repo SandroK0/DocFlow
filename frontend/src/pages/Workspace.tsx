@@ -12,17 +12,17 @@ function Workspace() {
   }
 
   return (
-      <div className={styles.Workspace}>
-        <div className={styles.header}>
-          <h1>Workspace</h1>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-        <main>
-          <FileManagerProvider>
-            <FileManager></FileManager>
-          </FileManagerProvider>
-        </main>
+    <div className={styles.Workspace}>
+      <div className={styles.header}>
+        <h1>Workspace</h1>
+        <button onClick={handleLogout}>Logout</button>
       </div>
+      <main>
+        <FileManagerProvider>
+          <FileManager></FileManager>
+        </FileManagerProvider>
+      </main>
+    </div>
   );
 }
 

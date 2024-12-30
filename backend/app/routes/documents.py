@@ -111,7 +111,7 @@ def update_document(id):
     new_content = data.get('content')
 
     if new_content:
-        if user.hased_storage_space(new_content):
+        if user.has_storage_space(new_content):
             document.content = new_content
         else:
             return jsonify({"message": "Not enough storage space"}), 400

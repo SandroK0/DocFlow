@@ -146,7 +146,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
+      setToastMsg(`Error Moving Folder: ${err.response.data.message}`);
     }
   };
 
@@ -194,7 +194,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
+      setToastMsg(`Error moving document: ${err.response.data.message}`);
     }
   };
 
@@ -204,7 +204,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await createDocument(title, folder ? folder.id : null);
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
+      setToastMsg(`Error creating document: ${err.response.data.message}`);
     }
   };
 

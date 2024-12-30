@@ -22,7 +22,7 @@ def create_folder():
     # Get folder data from request
     data = request.get_json()
     folder_name = data.get('name')
-    
+
     # Default to None for root folder
     parent_id = data.get('parent_id', None)
 

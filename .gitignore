@@ -1,4 +1,4 @@
-up.sh
-down.sh
+start.sh
+stop.sh
 todo.txt
 node_modules

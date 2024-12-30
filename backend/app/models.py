@@ -1,6 +1,5 @@
 from app import db
 from sqlalchemy.dialects.mysql import MEDIUMTEXT
-from flask_jwt_extended import JWTManager
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
@@ -19,6 +18,9 @@ def format_size(bytes_size):
         unit_index += 1
 
     return round(size, 2), units[unit_index]
+
+
+
 
 
 class User(db.Model):

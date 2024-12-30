@@ -1,5 +1,4 @@
 import { useFileManager } from "./useFileManager";
-
 export default function Storage() {
   const { storageState } = useFileManager();
 
