@@ -15,7 +15,7 @@ function Workspace() {
     <div className={styles.Workspace}>
       <div className={styles.header}>
         <h1>Workspace</h1>
-        <button onClick={handleLogout}>Logout</button>
+        <button onClick={handleLogout} className={styles.logoutBtn}>Logout</button>
       </div>
       <main>
         <FileManagerProvider>

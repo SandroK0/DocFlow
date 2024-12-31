@@ -1,48 +1,78 @@
 .Path {
   display: flex;
   align-items: center;
-  background-color: #f9f9f9;
-  padding: 8px 12px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  font-size: 20px;
+  background-color: #fff;
+  padding: 16px 24px;
+  border-radius: 14px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  font-size: 22px;
   color: #333;
-
-  height: 45px;
+  height: 60px;
   box-sizing: border-box;
+  transition: box-shadow 0.3s ease;
+}
+
+.Path:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .HomeIcon {
-  font-size: 16px;
-  color: #007bff;
+  font-size: 20px;
+  color: #333;
   cursor: pointer;
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease,
+    filter 0.3s ease;
+}
+
+.HomeIcon:hover {
+  color: #000;
+  transform: scale(1.2);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .Breadcrumb {
   display: flex;
   align-items: center;
+  gap: 16px;
 }
 
 .Separator {
-  margin: 0 8px;
-  color: #999;
-  font-size: 20px;
+  color: #ccc;
+  font-size: 22px;
+  transition: color 0.3s ease;
+}
+
+.Separator:hover {
+  color: #000;
 }
 
 .Crumb {
+  position: relative;
   cursor: pointer;
   color: #333;
   text-decoration: none;
-  transition: color 0.2s ease;
+  padding: 8px 16px;
+  border-radius: 12px;
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .Crumb:hover {
   color: #007bff;
+  transform: translateY(-2px);
 }
 
 .ActiveCrumb {
-  color: #5a67d8;
+  color: #fff; /* white text on active */
+  background-color: #000; /* black background */
   font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 12px;
   cursor: default;
   pointer-events: none;
+  position: relative;
 }

@@ -8,8 +8,7 @@ const ItemType = {
 };
 
 interface ItemDragDropWrapperProps {
-  item: Folder | Document; // Represents the item being wrapped.
-  isFolder: boolean; // True if the item is a folder, false if it's a document.
+  item: Folder | Document; isFolder: boolean; // True if the item is a folder, false if it's a document.
   handleMoveDocument: (
     documentToMove: Document,
     folderToMoveTo: Folder
@@ -23,6 +22,8 @@ interface DraggedItem {
   item: Folder | Document; // The actual item being dragged.
   type: string; // "folder" or "document".
 }
+
+
 
 const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
   item,

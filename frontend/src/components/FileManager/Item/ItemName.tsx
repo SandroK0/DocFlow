@@ -1,5 +1,6 @@
 import React from "react";
 import { Folder, Document } from "../../../Types";
+import styles from "../../../styles/FileManager/ItemList.module.css";
 
 interface ItemNameProps {
   item: Folder | Document;
@@ -19,6 +20,7 @@ const ItemName: React.FC<ItemNameProps> = ({
   return renaming ? (
     <input
       type="text"
+      className={styles.input}
       value={rnInputValue}
       onChange={(e) => setRnInputValue(e.target.value)}
       onClick={(e) => e.stopPropagation()}
@@ -29,4 +31,3 @@ const ItemName: React.FC<ItemNameProps> = ({
 };
 
 export default ItemName;
-

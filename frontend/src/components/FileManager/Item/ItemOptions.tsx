@@ -3,6 +3,9 @@ import ReactDOM from "react-dom";
 import DeleteItemModal from "../Modals/DeleteItemModal";
 import MoveItemModal from "../Modals/MoveItemModal";
 import { Folder, Document } from "../../../Types";
+import styles from "../../../styles/FileManager/ItemOptions.module.css";
+import { SlOptionsVertical } from "react-icons/sl";
+
 
 interface ItemOptionsProps {
   item: Folder | Document;
@@ -33,12 +36,15 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
 }) => {
   const [modal, setModal] = useState<"Delete" | "Move" | null>(null);
 
+
+
   return (
     <>
       <div onClick={(e) => e.stopPropagation()}>
         {renaming ? (
           <>
             <button
+              className={styles.button}
               onClick={() => {
                 if (isFolder) {
                   handleRenameFolder(item.id, rnInputValue);
@@ -50,13 +56,19 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
             >
               done
             </button>
-            <button onClick={() => setRenaming(false)}>cancel</button>
+            <button
+              className={styles.button}
+              onClick={() => setRenaming(false)}
+            >
+              cancel
+            </button>
           </>
         ) : (
           <>
             {showOptions === indx && (
               <>
                 <button
+                  className={styles.button}
                   onClick={() => {
                     setRnInputValue(
                       isFolder
@@ -68,14 +80,25 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
                 >
                   Rename
                 </button>
-                <button onClick={() => setModal("Delete")}>Delete</button>
-                <button onClick={() => setModal("Move")}>Move</button>
+                <button
+                  className={styles.button}
+                  onClick={() => setModal("Delete")}
+                >
+                  Delete
+                </button>
+                <button
+                  className={styles.button}
+                  onClick={() => setModal("Move")}
+                >
+                  Move
+                </button>
               </>
             )}
             <button
+              className={styles.button}
               onClick={() => setShowOptions(indx === showOptions ? null : indx)}
             >
-              ...
+              <SlOptionsVertical />
             </button>
           </>
         )}

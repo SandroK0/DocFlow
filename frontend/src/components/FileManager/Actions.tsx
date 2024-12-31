@@ -4,6 +4,8 @@ import NewItemModal from "./Modals/NewItemModal";
 import ReactDOM from "react-dom";
 import { CiGrid41 } from "react-icons/ci";
 import { CiBoxList } from "react-icons/ci";
+import { AiOutlinePlus } from "react-icons/ai";
+import { RiArrowGoBackFill } from "react-icons/ri";
 
 interface ActionsProps {
   onGoBack: () => void;
@@ -24,9 +26,9 @@ export default function Actions({
     <>
       <div style={{ display: "flex", gap: "10px" }} className={styles.actions}>
         <button onClick={onGoBack} disabled={disableGoBack}>
-          Back
+          <RiArrowGoBackFill />
         </button>
-        <button onClick={() => setModal("New")}>New</button>
+        <button onClick={() => setModal("New")}><AiOutlinePlus /></button>
         <button onClick={() => setView(view === "Grid" ? "List" : "Grid")}>
           {view === "Grid" ? <CiBoxList></CiBoxList> : <CiGrid41></CiGrid41>}
         </button>

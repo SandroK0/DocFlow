@@ -3,7 +3,11 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: "Arial", sans-serif;
+  font-family: "San Francisco", "Helvetica Neue", sans-serif; /* Apple-like typography */
+  background-color: #ffffff; /* White background */
+  color: #333333; /* Dark gray text for contrast */
+  margin: 0;
+  padding: 0;
 }
 
 /* Header */
@@ -11,50 +15,51 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 50px;
+  padding: 20px 40px;
   background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 28px; /* Larger logo text */
   font-weight: bold;
   color: #333333;
+  letter-spacing: -0.5px; /* Slightly tighter letter spacing */
 }
 
 .nav {
   display: flex;
-  gap: 15px;
+  gap: 20px;
 }
 
 .navButton {
   padding: 10px 20px;
   font-size: 16px;
   background: none;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  border: 1px solid #d1d1d6; /* Lighter gray border */
+  border-radius: 12px; /* Rounded corners */
   cursor: pointer;
-  color: #555;
+  color: #333333; /* Dark text */
   transition: background-color 0.3s, color 0.3s;
 }
 
 .navButton:hover {
-  background-color: #f5f5f5;
+  background-color: #f2f2f7; /* Subtle gray hover effect */
 }
 
 .navButtonPrimary {
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 16px;
-  background-color: #007bff;
-  color: white;
+  background-color: #333333; /* Dark background */
+  color: white; /* White text */
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .navButtonPrimary:hover {
-  background-color: #0056b3;
+  background-color: #000000; /* Darker shade on hover */
 }
 
 /* Hero Section */
@@ -65,103 +70,98 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 50px 20px;
-  background: linear-gradient(120deg, #6a11cb, #2575fc);
-  position: relative;
+  padding: 60px 30px;
+  background-color: #333333; /* Dark background */
   color: white;
+  position: relative;
   overflow: hidden;
 }
 
-/* Add decorative shapes to the hero background */
 .hero::before,
 .hero::after {
   content: "";
   position: absolute;
   border-radius: 50%;
   z-index: 1;
-  opacity: 0.2;
+  opacity: 0.1; /* Subtle opacity */
 }
 
 .hero::before {
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
   background: #ffffff;
   top: -100px;
   left: -150px;
 }
 
 .hero::after {
-  width: 500px;
-  height: 500px;
-  background: #ff5722;
-  bottom: -150px;
-  right: -200px;
-}
-
-/* Add a subtle grid overlay */
-.hero::before {
-  background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+  width: 450px;
+  height: 450px;
+  background: #000000;
+  bottom: -100px;
+  right: -150px;
 }
 
 .title {
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  font-size: 56px; /* Larger title for emphasis */
+  font-weight: 600;
+  margin-bottom: 15px;
+  letter-spacing: -1px;
   z-index: 2;
 }
 
 .subtitle {
-  font-size: 18px;
-  margin-bottom: 40px;
-  max-width: 600px;
+  font-size: 22px;
+  max-width: 650px;
+  margin-bottom: 35px;
   line-height: 1.6;
   z-index: 2;
 }
 
 .ctaButton {
-  padding: 15px 30px;
+  padding: 15px 40px;
   font-size: 18px;
-  background-color: #ffffff;
-  color: #007bff;
+  background-color: #ffffff; /* White background */
+  color: #333333; /* Dark text */
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
   z-index: 2;
 }
 
 .ctaButton:hover {
-  background-color: #f5f5f5;
-  color: #0056b3;
+  background-color: #f2f2f7; /* Subtle gray hover effect */
+  color: #000000; /* Darker color on hover */
 }
 
 /* Footer */
 .footer {
   text-align: center;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #f8f8f7; /* Light gray background */
   font-size: 14px;
-  color: #777;
+  color: #777777; /* Lighter gray text */
 }
 
 .demo {
   margin: 50px auto;
   text-align: center;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border-radius: 12px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 .demoTitle {
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 26px; /* Slightly larger title */
+  font-weight: 600;
   margin-bottom: 10px;
 }
 
 .demoSubtitle {
-  font-size: 16px;
-  color: #555;
+  font-size: 18px;
+  color: #333333;
   margin-bottom: 20px;
 }
 

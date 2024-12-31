@@ -1,11 +1,13 @@
 .listView {
   width: 100%;
   height: 700px;
-
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 10px;
+  background-color: #f9f9f9; /* Light background for the container */
+  box-sizing: border-box;
+  overflow-y: scroll;
 }
 
 .gridView {
@@ -16,6 +18,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 10px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
 }
 
 .item {
@@ -24,12 +28,17 @@
   align-items: center;
   width: 100%;
   cursor: pointer;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
-.itam:hover {
-  opacity: 0.8;
+.item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
 .itemLeft {
@@ -45,9 +54,58 @@
 }
 
 .folder {
-  background-color: #e0f7fa;
+  background-color: #e3f2fd; /* Light blue background for folders */
+  border: 1px solid #90caf9;
 }
 
 .document {
-  background-color: #fff9c4;
+  background-color: #fffde7; /* Light yellow background for documents */
+  border: 1px solid #ffe082;
+}
+
+/* Fixing the typo for .itam */
+.item:hover {
+  opacity: 0.8;
+}
+
+.input {
+  z-index: 12;
+  display: block;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #333;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  border: 1px solid #666;
+  box-shadow: 0 0 5px #666;
+}
+
+.input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.input:hover {
+  background: #f9f9f9;
+}
+
+.input:active {
+  background: #f2f2f2;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Disabled Style */
+.input:disabled {
+  color: rgba(0, 0, 0, 0.3);
+  background: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+  cursor: not-allowed;
 }

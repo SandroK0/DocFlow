@@ -91,7 +91,8 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ value, handleChange }) => {
       container: "#toolbar",
     },
   };
-  console.log(value);
+
+
   return (
     <div style={styles.container}>
       <div style={styles.headerContainer}>

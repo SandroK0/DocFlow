@@ -1,6 +1,7 @@
 import React from "react";
-import { RiFolderFill } from "react-icons/ri";
-import { IoDocumentTextOutline } from "react-icons/io5";
+import { IoIosDocument } from "react-icons/io";
+import { FaFolderOpen } from "react-icons/fa6";
+
 
 interface ItemIconProps {
   isFolder: boolean;
@@ -8,9 +9,9 @@ interface ItemIconProps {
 
 const ItemIcon: React.FC<ItemIconProps> = ({ isFolder }) => {
   return isFolder ? (
-    <RiFolderFill size={50} />
+    <FaFolderOpen size={50} />
   ) : (
-    <IoDocumentTextOutline size={50} />
+    <IoIosDocument size={50} />
   );
 };
 
