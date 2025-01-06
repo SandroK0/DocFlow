@@ -1,4 +1,4 @@
-import React from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Folder, Document } from "../../../Types";
 import styles from "../../../styles/FileManager/ItemList.module.css";
 
@@ -10,24 +10,36 @@ interface ItemNameProps {
   setRnInputValue: (value: string) => void;
 }
 
-const ItemName: React.FC<ItemNameProps> = ({
-  item,
-  isFolder,
-  renaming,
-  rnInputValue,
-  setRnInputValue,
-}) => {
-  return renaming ? (
-    <input
-      type="text"
-      className={styles.input}
-      value={rnInputValue}
-      onChange={(e) => setRnInputValue(e.target.value)}
-      onClick={(e) => e.stopPropagation()}
-    />
-  ) : (
-    <span>{isFolder ? (item as Folder).name : (item as Document).title}</span>
-  );
-};
+export interface ItemNameRef {
+  focusInput: () => void;
+}
+
+const ItemName = forwardRef<ItemNameRef, ItemNameProps>(
+  ({ item, isFolder, renaming, rnInputValue, setRnInputValue }, ref) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Expose focusInput to parent
+    useImperativeHandle(ref, () => ({
+      focusInput: () => {
+        console.log("focus")
+        inputRef.current?.focus();
+      },
+    }));
+
+    return renaming ? (
+      <input
+        ref={inputRef}
+        type="text"
+        className={styles.input}
+        value={rnInputValue}
+        onChange={(e) => setRnInputValue(e.target.value)}
+        onClick={(e) => e.stopPropagation()}
+      />
+    ) : (
+      <span>{isFolder ? (item as Folder).name : (item as Document).title}</span>
+    );
+  }
+);
 
 export default ItemName;
+

@@ -1,10 +1,35 @@
 import axios from "axios";
 import { API_URL } from "../config";
+import { jwtDecode } from "jwt-decode";
 
-// Helper to get token from localStorage
-export const getAuthHeaders = () => ({
-  Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-});
+const isValid = (token: string) => {
+  try {
+    const decodedToken = jwtDecode(token);
+
+    const expirationTime = decodedToken.exp ? decodedToken.exp * 1000 : 0; // Convert to milliseconds
+
+    const isExpired = Date.now() > expirationTime;
+
+    return !isExpired;
+  } catch (error: any) {
+    return false;
+  }
+};
+
+export const getAuthHeaders = () => {
+  const token = localStorage.getItem("jwt");
+
+  if (!token) {
+    return;
+  }
+
+  if (!isValid(token)) {
+    localStorage.removeItem("jwt");
+    return;
+  }
+
+  return { Authorization: `Bearer ${token}` };
+};
 
 export const login = async (username: string, password: string) => {
   const response = await axios.post(

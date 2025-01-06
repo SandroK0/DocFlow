@@ -143,3 +143,18 @@ def delete_document(id):
     db.session.delete(document)
     db.session.commit()
     return jsonify({"message": "Document deleted successfully"}), 200
+
+
+@documents_bp.route("/<int:id>", methods=["GET"])
+@jwt_required()
+def share_document(id):
+    current_user_id = get_jwt_identity()
+    current_user_id = int(current_user_id)
+
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    pass
+

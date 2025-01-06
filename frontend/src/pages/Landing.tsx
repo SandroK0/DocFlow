@@ -2,6 +2,8 @@ import React from "react";
 import styles from "../styles/Landing.module.css";
 import { useNavigate } from "react-router";
 
+
+
 const Landing: React.FC = () => {
   const navigate = useNavigate();
 
@@ -38,7 +40,9 @@ const Landing: React.FC = () => {
           Create, organize, and manage your documents efficiently. A powerful
           editor built for productivity.
         </p>
-        <button className={styles.ctaButton}>Get Started for Free</button>
+        <button className={styles.ctaButton} onClick={navigateToRegister}>
+          Get Started for Free
+        </button>
       </section>
 
       {/* Footer */}

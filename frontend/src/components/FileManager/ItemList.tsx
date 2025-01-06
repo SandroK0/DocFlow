@@ -10,9 +10,16 @@ interface ItemListProps {
   setView: Dispatch<SetStateAction<"Grid" | "List">>;
 }
 
+
+interface ItemOptions {
+  indx: number;
+  position: { left: number; top: number }
+}
+
+
 export default function ItemList(props: ItemListProps) {
   const { currentContent } = useFileManager();
-  const [showOptions, setShowOptions] = useState<number | null>(0);
+  const [showOptions, setShowOptions] = useState<ItemOptions | null>(null);
   const { view } = props;
 
   useEffect(() => {
@@ -33,6 +40,7 @@ export default function ItemList(props: ItemListProps) {
                 setShowOptions={setShowOptions}
                 indx={indx}
                 showOptions={showOptions}
+                view={view}
               />
             );
           }

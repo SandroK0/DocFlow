@@ -45,6 +45,10 @@ export default function Editing() {
     }
   }
 
+  function handleShare() {
+    console.log("share");
+  }
+
   async function handleGetDocument() {
     try {
       const document = await getDocument(Number(docId));
@@ -60,6 +64,15 @@ export default function Editing() {
       setDocument({ ...document, title: newTitle });
     }
   }
+
+  // const handleDownload = () => {
+  //   const blob = new Blob([value], { type: "text/html" });
+  //   const link = document.createElement("a");
+  //   link.href = URL.createObjectURL(blob);
+  //   link.download = "editor-content.html"; // Set the file name
+  //   link.click();
+  //   URL.revokeObjectURL(link.href); // Clean up the object URL
+  // }
 
   useEffect(() => {
     handleGetDocument();
@@ -95,10 +108,7 @@ export default function Editing() {
           Save
         </button>
         {document && (
-          <Editor
-            value={document.content}
-            handleChange={handleChange}
-          ></Editor>
+          <Editor value={document.content} handleChange={handleChange}></Editor>
         )}
       </div>
     </>
