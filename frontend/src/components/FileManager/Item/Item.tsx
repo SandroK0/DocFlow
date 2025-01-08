@@ -20,6 +20,8 @@ interface ItemProps {
   showOptions: ItemOptions | null;
   view: "Grid" | "List";
   setShowOptions: (options: ItemOptions | null) => void;
+  selectItemToggle: () => void;
+  isSelected: boolean;
 }
 
 interface ItemOptions {
@@ -33,6 +35,8 @@ const Item: React.FC<ItemProps> = ({
   indx,
   setShowOptions,
   showOptions,
+  selectItemToggle,
+  isSelected,
 }) => {
   const navigate = useNavigate();
   const {
@@ -41,6 +45,7 @@ const Item: React.FC<ItemProps> = ({
     handleMoveFolder,
     handleRenameFolder,
     handleRenameDocument,
+    selectedItems,
   } = useFileManager();
 
   const childRef = useRef<ItemNameRef>(null);
@@ -93,10 +98,14 @@ const Item: React.FC<ItemProps> = ({
         handleMoveFolder={handleMoveFolder}
       >
         <div
+          style={
+            isSelected ? { backgroundColor: "rgba(0, 123, 255, 0.3)" } : {}
+          }
           className={styles.item}
-          onClick={() =>
+          onDoubleClick={() =>
             isFolder ? goToFolder(item as Folder) : navigateToEdit(item.id)
           }
+          onClick={selectItemToggle}
           onContextMenu={(e: React.MouseEvent<HTMLDivElement>) => {
             e.preventDefault();
             handleOptionsClick(e);
@@ -116,9 +125,10 @@ const Item: React.FC<ItemProps> = ({
             />
           </div>
           {renaming ? (
-            <div 
-            className={styles.itemRight}
-            onClick={(e) => e.stopPropagation()}>
+            <div
+              className={styles.itemRight}
+              onClick={(e) => e.stopPropagation()}
+            >
               <button className={styles.button} onClick={submitName}>
                 done
               </button>
@@ -130,14 +140,26 @@ const Item: React.FC<ItemProps> = ({
               </button>
             </div>
           ) : (
-            <div 
-             className={`${styles.itemRight}`}
-             onClick={(e) => e.stopPropagation()}>
+            <div
+              className={`${styles.itemRight}`}
+              onClick={(e) => e.stopPropagation()}
+            >
               {showOpts && (
-                <button style={{ all: "unset" }} onClick={handleRenameClick}>
-                  <CiEdit />
-                </button>
+                <>
+                  <button
+                    style={{
+                      all: "unset",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onClick={handleRenameClick}
+                  >
+                    <CiEdit />
+                  </button>
+                </>
               )}
+
               <button
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                   handleOptionsClick(e)
@@ -166,8 +188,7 @@ const Item: React.FC<ItemProps> = ({
       {modal === "Delete" &&
         ReactDOM.createPortal(
           <DeleteItemModal
-            item={item}
-            isFolder={isFolder}
+            items={selectedItems ? selectedItems : [item]}
             closeModal={() => setModal(null)}
           />,
           document.body
@@ -175,8 +196,7 @@ const Item: React.FC<ItemProps> = ({
       {modal === "Move" &&
         ReactDOM.createPortal(
           <MoveItemModal
-            item={item}
-            isFolder={isFolder}
+            items={selectedItems ? selectedItems : [item]}
             closeModal={() => setModal(null)}
           />,
           document.body

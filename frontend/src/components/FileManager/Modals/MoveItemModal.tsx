@@ -8,8 +8,7 @@ import ModalContWrapper from "./ModalContWrapper";
 import Path from "../Path";
 
 interface MoveItemModalProps {
-  item: Document | Folder;
-  isFolder: boolean;
+  items: Array<Document | Folder>;
   closeModal: () => void;
 }
 interface ContentType {
@@ -18,7 +17,7 @@ interface ContentType {
 
 function MoveItemModal(props: MoveItemModalProps) {
   const { handleMoveDocument, handleMoveFolder } = useFileManager();
-  const { item, isFolder, closeModal } = props;
+  const { items, closeModal } = props;
   const [showMoveBtn, setShowMoveBtn] = useState<number | null>(null);
   const [currentFolders, setCurrentFolders] = useState<ContentType | null>(
     null
@@ -52,16 +51,15 @@ function MoveItemModal(props: MoveItemModalProps) {
   };
 
   const handleMoveClick = (folderToMoveTo: Folder | null) => {
-    if (isFolder) {
-      handleMoveFolder(item as Folder, folderToMoveTo);
-    } else {
-      handleMoveDocument(item as Document, folderToMoveTo);
-    }
+    items.forEach((item: Document | Folder, indx: number) => {
+      if ((item as Document).title) {
+        handleMoveDocument(item as Document, folderToMoveTo);
+      } else {
+        handleMoveFolder(item as Folder, folderToMoveTo);
+      }
+    });
+    closeModal();
   };
-
-  const { name } = isFolder
-    ? (item as Folder)
-    : { name: (item as Document).title };
 
   const refetchContent = () => {
     const currentFolderId = peek() != null ? peek()?.id ?? null : null;
@@ -82,9 +80,7 @@ function MoveItemModal(props: MoveItemModalProps) {
   return (
     <ModalContWrapper closeModal={closeModal}>
       <div className={styles.modalCont}>
-        <h3>
-          Moving {isFolder ? "folder" : "document"} named: {name}
-        </h3>
+        <h3>Moving ...</h3>
         <button onClick={() => goBack()} disabled={folderHistory.length === 0}>
           Back
         </button>
@@ -94,9 +90,10 @@ function MoveItemModal(props: MoveItemModalProps) {
         ></Path>
         <div className={styles.folderCont}>
           {currentFolders?.folders.map((folder) => {
-            if (folder.id === item.id) {
+            if (items.some((i) => i.id === folder.id)) {
               return null;
             }
+
             return (
               <div
                 key={folder.id}

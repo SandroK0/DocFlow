@@ -65,7 +65,7 @@ export default function Path(props: PathProps) {
             tabIndex={0}
             aria-label="Navigate to home"
           >
-            <AiOutlineHome size={20}/>
+            <AiOutlineHome size={20} />
           </div>
         </DroppableNode>
       }

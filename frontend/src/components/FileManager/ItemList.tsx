@@ -10,17 +10,37 @@ interface ItemListProps {
   setView: Dispatch<SetStateAction<"Grid" | "List">>;
 }
 
-
 interface ItemOptions {
   indx: number;
-  position: { left: number; top: number }
+  position: { left: number; top: number };
 }
 
-
 export default function ItemList(props: ItemListProps) {
-  const { currentContent } = useFileManager();
+  const { currentContent, selectItemToggle, selectedItems } = useFileManager();
   const [showOptions, setShowOptions] = useState<ItemOptions | null>(null);
+  const [isShiftPressed, setIsShiftPressed] = useState(false);
   const { view } = props;
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Shift") {
+      setIsShiftPressed(true);
+    }
+  };
+
+  const handleKeyUp = (event: KeyboardEvent) => {
+    if (event.key === "Shift") {
+      setIsShiftPressed(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
 
   useEffect(() => {
     setShowOptions(null);
@@ -32,6 +52,7 @@ export default function ItemList(props: ItemListProps) {
         [...currentContent.folders, ...currentContent.documents].map(
           (item: Folder | Document, indx: number) => {
             const isFolder = (item as Folder).name !== undefined;
+            const isSelected = selectedItems.includes(item);
             return (
               <Item
                 item={item}
@@ -40,6 +61,10 @@ export default function ItemList(props: ItemListProps) {
                 setShowOptions={setShowOptions}
                 indx={indx}
                 showOptions={showOptions}
+                selectItemToggle={() =>
+                  selectItemToggle(item, isSelected, isShiftPressed)
+                }
+                isSelected={isSelected}
                 view={view}
               />
             );

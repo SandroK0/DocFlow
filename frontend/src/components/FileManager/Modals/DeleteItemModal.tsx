@@ -4,38 +4,31 @@ import { Folder, Document } from "../../../Types";
 import ModalContWrapper from "./ModalContWrapper";
 
 interface DeleteItemModalProps {
-  item: Document | Folder;
-  isFolder: boolean;
+  items: Array<Document | Folder>;
   closeModal: () => void;
 }
 
 function DeleteItemModal(props: DeleteItemModalProps) {
-  const { item, isFolder, closeModal } = props;
+  const { items, closeModal } = props;
   const { handleDeleteDocument, handleDeleteFolder } = useFileManager();
 
-  const { name, is_empty } = isFolder
-    ? (item as Folder)
-    : { name: (item as Document).title, is_empty: true };
+  const handleConfirm = () => {
+    items.forEach((item: Document | Folder, indx: number) => {
+      if ((item as Document).title) {
+        handleDeleteDocument(item.id);
+      } else {
+        handleDeleteFolder(item.id);
+      }
+    });
+    closeModal();
+  };
 
   return (
     <>
       <ModalContWrapper closeModal={closeModal}>
         <div className={styles.container}>
-          <h3>
-            Are you sure you want to delete {isFolder ? "folder" : "document"}:{" "}
-            {name} {isFolder && !is_empty && "(folder is not empty)"}
-          </h3>
-          <button
-            className={styles.option}
-            onClick={() => {
-              if (isFolder) {
-                handleDeleteFolder((item as Folder).id);
-              } else {
-                handleDeleteDocument((item as Document).id);
-              }
-              closeModal();
-            }}
-          >
+          <h3>Are you sure you want to delete ?</h3>
+          <button className={styles.option} onClick={handleConfirm}>
             Yes
           </button>
           <button className={styles.option} onClick={closeModal}>

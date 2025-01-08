@@ -40,14 +40,14 @@ interface FileManagerContextType {
   handleDeleteFolder: (id: number) => Promise<void>;
   handleMoveFolder: (
     folderToMove: Folder,
-    folderToMoveTo: Folder | null,
+    folderToMoveTo: Folder | null
   ) => void;
   handleRenameFolder: (id: number, new_name: string) => void;
   handleCreateDocument: (title: string) => Promise<void>;
   handleDeleteDocument: (id: number) => Promise<void>;
   handleMoveDocument: (
     documentToMove: Document,
-    folderToMoveTo: Folder | null,
+    folderToMoveTo: Folder | null
   ) => void;
   handleRenameDocument: (id: number, new_title: string) => void;
   goToFolder: (folder: Folder) => void;
@@ -56,23 +56,55 @@ interface FileManagerContextType {
   handlePathClick: (folder_id: number) => void;
   toastMsg: string | null;
   setToastMsg: Dispatch<SetStateAction<string | null>>;
+  selectedItems: Array<Document | Folder>;
+  setSelectedItems: Dispatch<SetStateAction<Array<Document | Folder>>>;
+  selectItemToggle: (
+    item: Folder | Document,
+    isSelected: boolean,
+    isShiftPressed: boolean
+  ) => void;
 }
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [currentContent, setCurrentContent] = useState<ContentType | null>(
-    null,
+    null
   );
   const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const [storageState, setStorageState] = useState<Storage | null>(null);
+
+  const [selectedItems, setSelectedItems] = useState<Array<Document | Folder>>(
+    []
+  );
+
+  const selectItemToggle = (
+    item: Folder | Document,
+    isSelected: boolean,
+    isShiftPressed: boolean
+  ) => {
+    if (isSelected) {
+      if (selectedItems.length > 1) {
+        setSelectedItems([item]);
+      } else {
+        const updatedArr = selectedItems.filter((el) => el !== item);
+        setSelectedItems([...updatedArr]);
+      }
+    } else {
+      if (isShiftPressed) {
+        setSelectedItems([...selectedItems, item]);
+      } else {
+        setSelectedItems([item]);
+      }
+    }
+  };
 
   const peek = () =>
     folderHistory[folderHistory.length - 1]
@@ -84,7 +116,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const handlePathClick = (nodeId: number) => {
-    let newFolderHistory = [...folderHistory];
+    const newFolderHistory = [...folderHistory];
 
     while (
       newFolderHistory.length > 0 &&
@@ -124,17 +156,17 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const handleMoveFolder = async (
     folderToMove: Folder,
-    folderToMoveTo: Folder | null,
+    folderToMoveTo: Folder | null
   ) => {
     const duplicateFolder =
       folderToMoveTo &&
       folderToMoveTo.subfolders.some(
-        (subfolder) => subfolder.name === folderToMove.name,
+        (subfolder) => subfolder.name === folderToMove.name
       );
 
     if (duplicateFolder) {
       setToastMsg(
-        `Cannot move folder: A folder named "${folderToMove.name}" already exists in the target folder.`,
+        `Cannot move folder: A folder named "${folderToMove.name}" already exists in the target folder.`
       );
       return;
     }
@@ -142,7 +174,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await updateFolder(
         folderToMove.id,
-        folderToMoveTo === null ? null : folderToMoveTo.id,
+        folderToMoveTo === null ? null : folderToMoveTo.id
       );
       refetchContent();
     } catch (err: any) {
@@ -170,17 +202,17 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleMoveDocument = async (
     documentToMove: Document,
-    folderToMoveTo: Folder | null,
+    folderToMoveTo: Folder | null
   ) => {
     const duplicateDocument =
       folderToMoveTo &&
       folderToMoveTo.documents.some(
-        (doc) => doc.title === documentToMove.title,
+        (doc) => doc.title === documentToMove.title
       );
 
     if (duplicateDocument) {
       setToastMsg(
-        `Cannot move document: A document named "${documentToMove.title}" already exists in the target folder.`,
+        `Cannot move document: A document named "${documentToMove.title}" already exists in the target folder.`
       );
       return;
     }
@@ -190,7 +222,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
         documentToMove.id,
         undefined,
         undefined,
-        folderToMoveTo === null ? null : folderToMoveTo.id,
+        folderToMoveTo === null ? null : folderToMoveTo.id
       );
       refetchContent();
     } catch (err: any) {
@@ -218,7 +250,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const refetchContent = () => {
-    const currentFolderId = peek() != null ? (peek()?.id ?? null) : null;
+    const currentFolderId = peek() != null ? peek()?.id ?? null : null;
     fetchFolderContent(currentFolderId)
       .then((data) => setCurrentContent(data))
       .catch((err) => console.error("Error fetching folder content:", err));
@@ -257,6 +289,9 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
         handlePathClick,
         toastMsg,
         setToastMsg,
+        selectItemToggle,
+        selectedItems,
+        setSelectedItems,
       }}
     >
       {children}
