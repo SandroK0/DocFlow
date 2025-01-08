@@ -46,6 +46,7 @@ const Item: React.FC<ItemProps> = ({
     handleRenameFolder,
     handleRenameDocument,
     selectedItems,
+    setSelectedItems,
   } = useFileManager();
 
   const childRef = useRef<ItemNameRef>(null);
@@ -153,7 +154,10 @@ const Item: React.FC<ItemProps> = ({
                       justifyContent: "center",
                       alignItems: "center",
                     }}
-                    onClick={handleRenameClick}
+                    onClick={() => {
+                      setSelectedItems([]);
+                      handleRenameClick();
+                    }}
                   >
                     <CiEdit />
                   </button>
@@ -161,9 +165,10 @@ const Item: React.FC<ItemProps> = ({
               )}
 
               <button
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                  handleOptionsClick(e)
-                }
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  setSelectedItems([]);
+                  handleOptionsClick(e);
+                }}
                 className={styles.optBtn}
               >
                 <SlOptionsVertical />
@@ -188,7 +193,7 @@ const Item: React.FC<ItemProps> = ({
       {modal === "Delete" &&
         ReactDOM.createPortal(
           <DeleteItemModal
-            items={selectedItems ? selectedItems : [item]}
+            items={selectedItems.length > 0 ? selectedItems : [item]}
             closeModal={() => setModal(null)}
           />,
           document.body
@@ -196,7 +201,7 @@ const Item: React.FC<ItemProps> = ({
       {modal === "Move" &&
         ReactDOM.createPortal(
           <MoveItemModal
-            items={selectedItems ? selectedItems : [item]}
+            items={selectedItems.length > 0 ? selectedItems : [item]}
             closeModal={() => setModal(null)}
           />,
           document.body

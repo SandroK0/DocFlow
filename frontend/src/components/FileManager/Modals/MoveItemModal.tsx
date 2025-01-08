@@ -16,7 +16,7 @@ interface ContentType {
 }
 
 function MoveItemModal(props: MoveItemModalProps) {
-  const { handleMoveDocument, handleMoveFolder } = useFileManager();
+  const { handleMoveDocument, handleMoveFolder, setSelectedItems } = useFileManager();
   const { items, closeModal } = props;
   const [showMoveBtn, setShowMoveBtn] = useState<number | null>(null);
   const [currentFolders, setCurrentFolders] = useState<ContentType | null>(
@@ -51,13 +51,14 @@ function MoveItemModal(props: MoveItemModalProps) {
   };
 
   const handleMoveClick = (folderToMoveTo: Folder | null) => {
-    items.forEach((item: Document | Folder, indx: number) => {
+    items.forEach((item: Document | Folder) => {
       if ((item as Document).title) {
         handleMoveDocument(item as Document, folderToMoveTo);
       } else {
         handleMoveFolder(item as Folder, folderToMoveTo);
       }
     });
+    setSelectedItems([])
     closeModal();
   };
 

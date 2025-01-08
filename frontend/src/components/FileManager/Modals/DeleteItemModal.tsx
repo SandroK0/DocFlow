@@ -10,18 +10,20 @@ interface DeleteItemModalProps {
 
 function DeleteItemModal(props: DeleteItemModalProps) {
   const { items, closeModal } = props;
-  const { handleDeleteDocument, handleDeleteFolder } = useFileManager();
+  const { handleDeleteDocument, handleDeleteFolder, setSelectedItems } = useFileManager();
 
   const handleConfirm = () => {
-    items.forEach((item: Document | Folder, indx: number) => {
+    items.forEach((item: Document | Folder) => {
       if ((item as Document).title) {
         handleDeleteDocument(item.id);
       } else {
         handleDeleteFolder(item.id);
       }
     });
+    setSelectedItems([])
     closeModal();
   };
+
 
   return (
     <>

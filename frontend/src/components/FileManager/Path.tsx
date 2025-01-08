@@ -30,7 +30,7 @@ const DroppableNode: React.FC<DroppableNodeProps> = ({ node, children }) => {
 
   const [{ isOver }, drop] = useDrop({
     accept: [ItemType.FOLDER, ItemType.DOCUMENT],
-    drop: (draggedItem: DraggedItem, monitor: any) => {
+    drop: (draggedItem: DraggedItem) => {
       if (draggedItem.type === ItemType.DOCUMENT) {
         handleMoveDocument(draggedItem.item as Document, node);
       } else if (draggedItem.type === ItemType.FOLDER) {

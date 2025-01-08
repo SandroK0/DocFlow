@@ -7,7 +7,6 @@ import { CiBoxList } from "react-icons/ci";
 import { AiOutlinePlus } from "react-icons/ai";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { useFileManager } from "./useFileManager";
-import { Folder, Document } from "../../Types";
 import DeleteItemModal from "./Modals/DeleteItemModal";
 import MoveItemModal from "./Modals/MoveItemModal";
 
@@ -49,7 +48,7 @@ export default function Actions({
       {modal === "New" &&
         ReactDOM.createPortal(
           <NewItemModal closeModal={() => setModal(null)} />,
-          document.body // Render in the root of the document
+          document.body 
         )}
       {modal === "Delete" &&
         ReactDOM.createPortal(

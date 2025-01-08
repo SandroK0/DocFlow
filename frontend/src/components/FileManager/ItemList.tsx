@@ -46,6 +46,8 @@ export default function ItemList(props: ItemListProps) {
     setShowOptions(null);
   }, [currentContent]);
 
+
+  console.log(selectedItems)
   return (
     <div className={view === "List" ? styles.listView : styles.gridView}>
       {currentContent &&

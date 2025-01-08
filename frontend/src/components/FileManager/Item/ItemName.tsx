@@ -21,7 +21,6 @@ const ItemName = forwardRef<ItemNameRef, ItemNameProps>(
     // Expose focusInput to parent
     useImperativeHandle(ref, () => ({
       focusInput: () => {
-        console.log("focus")
         inputRef.current?.focus();
       },
     }));
@@ -42,4 +41,3 @@ const ItemName = forwardRef<ItemNameRef, ItemNameProps>(
 );
 
 export default ItemName;
-

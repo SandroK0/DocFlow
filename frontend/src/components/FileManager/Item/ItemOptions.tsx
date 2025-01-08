@@ -4,14 +4,13 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiEdit } from "react-icons/ci";
 import { MdDriveFileMoveOutline } from "react-icons/md";
 
-
 interface ItemOptionsProps {
   closeOptions: () => void;
   handleRenameClick: () => void;
   handleRenameFolder: (id: number, newName: string) => void;
   handleRenameDocument: (id: number, newName: string) => void;
-  position: { left: number, top: number };
-  setModal: Dispatch<SetStateAction<"Delete" | "Move" | null>>
+  position: { left: number; top: number };
+  setModal: Dispatch<SetStateAction<"Delete" | "Move" | null>>;
 }
 
 const ItemOptions: React.FC<ItemOptionsProps> = ({
@@ -20,8 +19,6 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
   closeOptions,
   setModal,
 }) => {
-
-
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,15 +38,19 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
     };
   }, [closeOptions]);
 
-
   return (
     <>
-      <div ref={menuRef} onClick={(e) => e.stopPropagation()} className={styles.itemOptions} style={{ left: `${position.left - 200}px`, top: `${position.top}px` }}>
+      <div
+        ref={menuRef}
+        onClick={(e) => e.stopPropagation()}
+        className={styles.itemOptions}
+        style={{ left: `${position.left - 200}px`, top: `${position.top}px` }}
+      >
         <button
           className={styles.button}
           onClick={() => {
-            handleRenameClick()
-            closeOptions()
+            handleRenameClick();
+            closeOptions();
           }}
         >
           <CiEdit /> Rename
@@ -57,25 +58,23 @@ const ItemOptions: React.FC<ItemOptionsProps> = ({
         <button
           className={styles.button}
           onClick={() => {
-
-
-            setModal("Delete")
-            closeOptions()
+            setModal("Delete");
+            closeOptions();
           }}
         >
-          <RiDeleteBin6Line />  Delete
+          <RiDeleteBin6Line /> Delete
         </button>
         <button
           className={styles.button}
           onClick={() => {
-            setModal("Move")
-            closeOptions()
+            setModal("Move");
+            closeOptions();
           }}
         >
           <MdDriveFileMoveOutline /> Move
         </button>
-      </div >
-    </ >
+      </div>
+    </>
   );
 };
 
