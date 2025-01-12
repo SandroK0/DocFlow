@@ -20,9 +20,6 @@ def format_size(bytes_size):
     return round(size, 2), units[unit_index]
 
 
-
-
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -99,6 +96,8 @@ class Document(db.Model):
     folder_id = db.Column(db.Integer, db.ForeignKey(
         'folder.id'), nullable=True)  # Document belongs to a folder
 
+    in_trash = db.Column(db.Boolean, default=False, nullable=False)
+
     def __repr__(self):
         return f'<Document {self.title}>'
 
@@ -126,6 +125,8 @@ class Folder(db.Model):
     parent = db.relationship('Folder', remote_side=[
                              id], backref='children', lazy=True)
     documents = db.relationship('Document', backref='folder', lazy=True)
+
+    in_trash = db.Column(db.Boolean, default=False, nullable=False)
 
     @property
     def is_empty(self):

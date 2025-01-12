@@ -179,3 +179,52 @@ export const updateDocument = async (
 
   return response.data;
 };
+
+export const getTrash = async (): Promise<any> => {
+  const response = await axios.get(`${API_URL}/trash/`, {
+    headers: getAuthHeaders(),
+  });
+
+  return response.data;
+};
+export const deleteAllFromTrash = async () => {
+  const response = await axios.post(
+    `${API_URL}/trash/delete_all`,
+    {}, // Empty request body since no data is sent
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  return response.data;
+};
+
+export const restoreAllFromTrash = async () => {
+  const response = await axios.post(
+    `${API_URL}/trash/restore_all`,
+    {}, // Empty request body since no data is sent
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  return response.data;
+};
+
+export const restoreDocumentFromTrash = async (id: number) => {
+  const response = await axios.post(
+    `${API_URL}/trash/restore/document/${id}`,
+    {}, // Empty request body since no data is sent
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  return response.data;
+};
+
+export const deleteDocumentFromTrash = async () => {};
+
+export const restoreFolderFromTrash = async () => {};
+
+export const deleteFolderFromTrash = async () => {};

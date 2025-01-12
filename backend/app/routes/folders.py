@@ -8,16 +8,20 @@ from app.models import Document, User
 folders_bp = Blueprint('folders', __name__)
 
 
+def get_current_user():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(int(current_user_id))
+    if not user:
+        return None, jsonify({"message": "User not found"}), 404
+    return user, None
+
+
 @folders_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_folder():
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
-
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user, error = get_current_user()
+    if error:
+        return error
 
     # Get folder data from request
     data = request.get_json()
@@ -35,13 +39,13 @@ def create_folder():
         if not parent_folder:
             return jsonify({"message": "Parent folder not found"}), 404
 
-        if parent_folder.user_id != current_user_id:
+        if parent_folder.user_id != user.id:
             return jsonify({"message": "Parent folder does not belong to the current user"}), 403
 
     new_folder = Folder(
         name=folder_name,
         parent_id=parent_id,
-        user_id=current_user_id
+        user_id=user.id
     )
 
     # Check if a folder with the same name already exists in the parent folder
@@ -69,20 +73,16 @@ def create_folder():
 @folders_bp.route('/<int:folder_id>', methods=['GET'])
 @jwt_required()
 def get_folder(folder_id=None):
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
-
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user, error = get_current_user()
+    if error:
+        return error
 
     if folder_id is None:
         # Fetch root-level folders and documents
         root_folders = Folder.query.filter_by(
-            user_id=user.id, parent_id=None).all()
+            user_id=user.id, parent_id=None, in_trash=False).all()
         root_documents = Document.query.filter_by(
-            user_id=user.id, folder_id=None).all()
+            user_id=user.id, folder_id=None, in_trash=False).all()
 
         return jsonify({
             "folders": [folder.to_dict() for folder in root_folders],
@@ -90,7 +90,8 @@ def get_folder(folder_id=None):
         })
     else:
         # Fetch the requested folder
-        folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
+        folder = Folder.query.filter_by(
+            id=folder_id, user_id=user.id, in_trash=False).first()
 
         if not folder:
             return jsonify({"message": "Folder not found"}), 404
@@ -105,30 +106,17 @@ def get_folder(folder_id=None):
 @folders_bp.route('/<int:folder_id>', methods=['DELETE'])
 @jwt_required()
 def delete_folder(folder_id):
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
-
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user, error = get_current_user()
+    if error:
+        return error
 
     folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
 
     if not folder:
         return jsonify({"message": "Folder not found"}), 404
 
-    # Recursive function to delete nested folders and documents
-    def delete_nested_folders(folder):
-        for document in folder.documents:
-            db.session.delete(document)
-
-        for subfolder in folder.children:
-            delete_nested_folders(subfolder)
-
-        db.session.delete(folder)
-
-    delete_nested_folders(folder)
+    folder.in_trash = True
+    folder.parent_id = None
 
     db.session.commit()
 
@@ -138,12 +126,9 @@ def delete_folder(folder_id):
 @folders_bp.route('/<int:folder_id>', methods=['PUT'])
 @jwt_required()
 def update_folder(folder_id):
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user, error = get_current_user()
+    if error:
+        return error
 
     folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
     if not folder:

@@ -25,7 +25,7 @@ function MoveItemModal(props: MoveItemModalProps) {
   const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
 
   const handlePathClick = (nodeId: number) => {
-    let newFolderHistory = [...folderHistory];
+    const newFolderHistory = [...folderHistory];
 
     while (
       newFolderHistory.length > 0 &&

@@ -34,9 +34,11 @@ def create_app():
     from app.routes.user import user_bp
     from app.routes.documents import documents_bp
     from app.routes.folders import folders_bp
+    from app.routes.trash import trash_bp
 
     app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(documents_bp, url_prefix='/documents')
     app.register_blueprint(folders_bp, url_prefix='/folders')
+    app.register_blueprint(trash_bp, url_prefix='/trash')
 
     return app

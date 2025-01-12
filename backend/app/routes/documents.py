@@ -6,17 +6,20 @@ from app.models import Document, User
 documents_bp = Blueprint('documents', __name__)
 
 
+def get_current_user():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(int(current_user_id))
+    if not user:
+        return None, jsonify({"message": "User not found"}), 404
+    return user, None
+
 # Create a new document route
 @documents_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_document():
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
-
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user, error = get_current_user()
+    if error:
+        return error
 
     data = request.get_json()
 
@@ -57,8 +60,9 @@ def create_document():
 @documents_bp.route('/<int:id>', methods=['GET'])
 @jwt_required()
 def get_document(id):
-    current_user_id = get_jwt_identity()  # Get the current user from JWT token
-    current_user_id = int(current_user_id)
+    user, error = get_current_user()
+    if error:
+        return error
 
     document = Document.query.get(id)
 
@@ -67,7 +71,7 @@ def get_document(id):
         return jsonify({"message": "Document not found"}), 404
 
     # Ensure the document belongs to the current user
-    if document.user_id != current_user_id:
+    if document.user_id != user.id:
         return jsonify({"message": "You are not authorized to view this document"}), 403
 
     return jsonify(document.to_dict()), 200
@@ -76,12 +80,9 @@ def get_document(id):
 @documents_bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_document(id):
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user, error = get_current_user()
+    if error:
+        return error
 
     document = Document.query.get(id)
     if not document:
@@ -126,13 +127,9 @@ def update_document(id):
 @documents_bp.route("/<int:id>", methods=["DELETE"])
 @jwt_required()
 def delete_document(id):
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
-
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user, error = get_current_user()
+    if error:
+        return error
 
     document = Document.query.get(id)
     if not document:
@@ -140,7 +137,9 @@ def delete_document(id):
     if document.user_id != user.id:
         return jsonify({"message": "You do not have permission to delete this document"}), 403
 
-    db.session.delete(document)
+    document.in_trash = True
+    document.folder_id = None
+
     db.session.commit()
     return jsonify({"message": "Document deleted successfully"}), 200
 
@@ -148,13 +147,8 @@ def delete_document(id):
 @documents_bp.route("/<int:id>", methods=["GET"])
 @jwt_required()
 def share_document(id):
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
-
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user, error = get_current_user()
+    if error:
+        return error
 
     pass
-

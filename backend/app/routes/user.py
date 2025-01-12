@@ -7,6 +7,14 @@ from app.models import User
 user_bp = Blueprint('user', __name__)
 
 
+def get_current_user():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(int(current_user_id))
+    if not user:
+        return None, jsonify({"message": "User not found"}), 404
+    return user, None
+
+
 # Register route
 @user_bp.route('/register', methods=['POST'])
 def register():
@@ -48,10 +56,9 @@ def login():
 @jwt_required()
 def get_user_storage_info():
 
-    current_user_id = get_jwt_identity()
-    current_user_id = int(current_user_id)
-
-    user = User.query.get(current_user_id)
+    user, error = get_current_user()
+    if error:
+        return error
 
     if not user:
         return jsonify({"message": "User not found"}), 404
