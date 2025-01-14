@@ -5,12 +5,10 @@ import Storage from "./Storage";
 import Path from "./Path";
 import { useEffect, useState } from "react";
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import Trash from "./Trash";
 
 export default function FileManager() {
   const { folderHistory, goBack, handlePathClick, toastMsg, setToastMsg } =
     useFileManager();
-  const [showTrash, setShowTrash] = useState<boolean>(false)
   const [view, setView] = useState<"Grid" | "List">("List");
 
   useEffect(() => {
@@ -44,7 +42,6 @@ export default function FileManager() {
         transition={Bounce}
         style={{ fontFamily: "monospace" }}
       />
-      <button onClick={() => setShowTrash(true)}>Trash</button>
       <Actions
         onGoBack={goBack}
         disableGoBack={folderHistory.length === 0}
@@ -54,9 +51,6 @@ export default function FileManager() {
       <Path folderHistory={folderHistory} handlePathClick={handlePathClick} />
       <ItemList view={view} setView={setView} />
       <Storage></Storage>
-      {
-        showTrash && <Trash close={() => setShowTrash(false)}></Trash>
-      }
 
     </div>
   );

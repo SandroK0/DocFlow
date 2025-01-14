@@ -12,6 +12,7 @@ import ItemOptions from "./ItemOptions";
 import { CiEdit } from "react-icons/ci";
 import DeleteItemModal from "../Modals/DeleteItemModal";
 import MoveItemModal from "../Modals/MoveItemModal";
+import { MdDriveFileMoveOutline } from "react-icons/md";
 
 interface ItemProps {
   item: Folder | Document;
@@ -147,6 +148,20 @@ const Item: React.FC<ItemProps> = ({
             >
               {showOpts && (
                 <>
+                  {" "}
+                  <button
+                    style={{
+                      all: "unset",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onClick={() => {
+                      setModal("Move");
+                    }}
+                  >
+                    <MdDriveFileMoveOutline />
+                  </button>
                   <button
                     style={{
                       all: "unset",
@@ -160,7 +175,7 @@ const Item: React.FC<ItemProps> = ({
                     }}
                   >
                     <CiEdit />
-                  </button>
+                  </button>{" "}
                 </>
               )}
 

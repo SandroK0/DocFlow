@@ -45,7 +45,7 @@ export default function ModalContWrapper({
       style={{
         width: "100vw",
         height: "100vh",
-        zIndex: 11,
+        zIndex: 20,
         position: "absolute",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         top: 0,

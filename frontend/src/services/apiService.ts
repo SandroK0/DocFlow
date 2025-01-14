@@ -132,6 +132,45 @@ export const getDocument = async (docId: number) => {
   return response.data;
 };
 
+export const shareDocument = async (id: number, role: "viewer" | "editor") => {
+  const response = await axios.post(
+    `${API_URL}/documents/share/${id}`,
+    { role },
+    { headers: getAuthHeaders() }
+  );
+
+  return response.data;
+};
+
+export const getSharedDocument = async (share_token: string) => {
+  const response = await axios.get(
+    `${API_URL}/documents/shared/${share_token}`
+  );
+
+  return response.data;
+};
+
+export const updateSharedDocument = async (
+  share_token: string,
+  title?: string,
+  content?: string
+) => {
+  const payload: {
+    title?: string;
+    content?: string;
+  } = {};
+
+  if (title !== undefined) payload.title = title;
+  if (content !== undefined) payload.content = content;
+
+  const response = await axios.put(
+    `${API_URL}/documents/shared/${share_token}`,
+    payload
+  );
+
+  return response.data;
+};
+
 // Create a new document
 export const createDocument = async (
   title: string,
@@ -180,13 +219,14 @@ export const updateDocument = async (
   return response.data;
 };
 
-export const getTrash = async (): Promise<any> => {
+export const getTrashData = async (): Promise<any> => {
   const response = await axios.get(`${API_URL}/trash/`, {
     headers: getAuthHeaders(),
   });
 
   return response.data;
 };
+
 export const deleteAllFromTrash = async () => {
   const response = await axios.post(
     `${API_URL}/trash/delete_all`,
@@ -223,8 +263,38 @@ export const restoreDocumentFromTrash = async (id: number) => {
   return response.data;
 };
 
-export const deleteDocumentFromTrash = async () => {};
+export const deleteDocumentFromTrash = async (id: number) => {
+  const response = await axios.post(
+    `${API_URL}/trash/delete/document/${id}`,
+    {}, // Empty request body since no data is sent
+    {
+      headers: getAuthHeaders(),
+    }
+  );
 
-export const restoreFolderFromTrash = async () => {};
+  return response.data;
+};
 
-export const deleteFolderFromTrash = async () => {};
+export const restoreFolderFromTrash = async (id: number) => {
+  const response = await axios.post(
+    `${API_URL}/trash/restore/folder/${id}`,
+    {}, // Empty request body since no data is sent
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  return response.data;
+};
+
+export const deleteFolderFromTrash = async (id: number) => {
+  const response = await axios.post(
+    `${API_URL}/trash/delete/folder/${id}`,
+    {}, // Empty request body since no data is sent
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  return response.data;
+};

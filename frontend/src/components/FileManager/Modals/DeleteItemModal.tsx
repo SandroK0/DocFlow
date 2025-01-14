@@ -1,7 +1,7 @@
 import styles from "../../../styles/FileManager/New.module.css";
 import { useFileManager } from "../useFileManager";
 import { Folder, Document } from "../../../Types";
-import ModalContWrapper from "./ModalContWrapper";
+import ModalContWrapper from "../../ModalContWrapper";
 
 interface DeleteItemModalProps {
   items: Array<Document | Folder>;

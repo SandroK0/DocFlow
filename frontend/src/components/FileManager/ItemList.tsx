@@ -16,7 +16,8 @@ interface ItemOptions {
 }
 
 export default function ItemList(props: ItemListProps) {
-  const { currentContent, selectItemToggle, selectedItems } = useFileManager();
+  const { currentContent, selectItemToggle, selectedItems, setSelectedItems } =
+    useFileManager();
   const [showOptions, setShowOptions] = useState<ItemOptions | null>(null);
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const { view } = props;
@@ -46,9 +47,16 @@ export default function ItemList(props: ItemListProps) {
     setShowOptions(null);
   }, [currentContent]);
 
-
   return (
-    <div className={view === "List" ? styles.listView : styles.gridView}>
+    <div
+      className={view === "List" ? styles.listView : styles.gridView}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          setSelectedItems([]);
+        }
+        e.stopPropagation();
+      }}
+    >
       {currentContent &&
         [...currentContent.folders, ...currentContent.documents].map(
           (item: Folder | Document, indx: number) => {

@@ -9,6 +9,8 @@ import { RiArrowGoBackFill } from "react-icons/ri";
 import { useFileManager } from "./useFileManager";
 import DeleteItemModal from "./Modals/DeleteItemModal";
 import MoveItemModal from "./Modals/MoveItemModal";
+import { CiTrash } from "react-icons/ci";
+import Trash from "./Trash";
 
 interface ActionsProps {
   onGoBack: () => void;
@@ -23,7 +25,9 @@ export default function Actions({
   view,
   setView,
 }: ActionsProps) {
-  const [modal, setModal] = useState<"New" | "Delete" | "Move" | null>(null);
+  const [modal, setModal] = useState<
+    "New" | "Delete" | "Move" | "Trash" | null
+  >(null);
   const { selectedItems } = useFileManager();
 
   return (
@@ -38,6 +42,10 @@ export default function Actions({
         <button onClick={() => setView(view === "Grid" ? "List" : "Grid")}>
           {view === "Grid" ? <CiBoxList></CiBoxList> : <CiGrid41></CiGrid41>}
         </button>
+        <button onClick={() => setModal("Trash")}>
+          {" "}
+          <CiTrash />
+        </button>
         {selectedItems.length !== 0 && (
           <div>
             <button onClick={() => setModal("Delete")}>Delete</button>
@@ -48,7 +56,7 @@ export default function Actions({
       {modal === "New" &&
         ReactDOM.createPortal(
           <NewItemModal closeModal={() => setModal(null)} />,
-          document.body 
+          document.body
         )}
       {modal === "Delete" &&
         ReactDOM.createPortal(
@@ -64,6 +72,11 @@ export default function Actions({
             closeModal={() => setModal(null)}
             items={selectedItems}
           />,
+          document.body
+        )}
+      {modal === "Trash" &&
+        ReactDOM.createPortal(
+          <Trash close={() => setModal(null)}></Trash>,
           document.body
         )}
     </>

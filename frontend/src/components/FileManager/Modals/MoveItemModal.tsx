@@ -4,7 +4,7 @@ import { Folder, Document } from "../../../Types";
 import { FaFolder } from "react-icons/fa";
 import { fetchFolderContent } from "../../../services/apiService";
 import { useFileManager } from "../useFileManager";
-import ModalContWrapper from "./ModalContWrapper";
+import ModalContWrapper from "../../ModalContWrapper";
 import Path from "../Path";
 
 interface MoveItemModalProps {
@@ -16,7 +16,8 @@ interface ContentType {
 }
 
 function MoveItemModal(props: MoveItemModalProps) {
-  const { handleMoveDocument, handleMoveFolder, setSelectedItems } = useFileManager();
+  const { handleMoveDocument, handleMoveFolder, setSelectedItems } =
+    useFileManager();
   const { items, closeModal } = props;
   const [showMoveBtn, setShowMoveBtn] = useState<number | null>(null);
   const [currentFolders, setCurrentFolders] = useState<ContentType | null>(
@@ -58,7 +59,7 @@ function MoveItemModal(props: MoveItemModalProps) {
         handleMoveFolder(item as Folder, folderToMoveTo);
       }
     });
-    setSelectedItems([])
+    setSelectedItems([]);
     closeModal();
   };
 
@@ -90,8 +91,15 @@ function MoveItemModal(props: MoveItemModalProps) {
           handlePathClick={handlePathClick}
         ></Path>
         <div className={styles.folderCont}>
-          {currentFolders?.folders.map((folder) => {
-            if (items.some((i) => i.id === folder.id)) {
+          {currentFolders?.folders.map((folder: Folder) => {
+            if (
+              items.some((i) => {
+                if ("name" in i) {
+                  return `${i.id}-${i.name}` === `${folder.id}-${folder.name}`;
+                }
+                return false;
+              })
+            ) {
               return null;
             }
 

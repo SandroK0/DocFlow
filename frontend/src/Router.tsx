@@ -25,7 +25,6 @@ const RedirectIfLoggedIn: React.FC = () => {
   return isAuthenticated() ? <Navigate to="/workspace" replace /> : <Outlet />;
 };
 
-
 const Router: React.FC = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -42,8 +41,12 @@ const Router: React.FC = () => {
           <Route path="workspace" element={<Workspace />} />
           <Route path="workspace/editing/:docId" element={<Editing />} />
         </Route>
-      </Route>,
-    ),
+        <Route
+          path="document/shared/:share_token"
+          element={<Editing></Editing>}
+        ></Route>
+      </Route>
+    )
   );
 
   return <RouterProvider router={router} />;

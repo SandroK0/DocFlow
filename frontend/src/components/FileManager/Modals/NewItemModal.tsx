@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "../../../styles/FileManager/New.module.css"; // Assuming you have a CSS module
 import { useFileManager } from "../useFileManager";
 import { Folder, Document } from "../../../Types";
-import ModalContWrapper from "./ModalContWrapper";
+import ModalContWrapper from "../../ModalContWrapper";
 
 function NewItemModal({ closeModal }: { closeModal: () => void }) {
   const [selectedOption, setSelectedOption] = useState<

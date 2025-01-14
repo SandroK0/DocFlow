@@ -4,6 +4,7 @@ import "react-quill/dist/quill.snow.css";
 
 interface QuillEditorProps {
   value: string;
+  readOnly: boolean;
   handleChange: (content: string) => void;
 }
 
@@ -76,7 +77,7 @@ const fontOptions = [
   { value: "lucida", label: "Lucida" },
 ];
 
-const QuillEditor: React.FC<QuillEditorProps> = ({ value, handleChange }) => {
+const QuillEditor: React.FC<QuillEditorProps> = ({ value, handleChange, readOnly }) => {
   const quillRef = useRef<ReactQuill>(null);
 
   useEffect(() => {
@@ -149,6 +150,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ value, handleChange }) => {
         modules={modules}
         style={styles.editor}
         placeholder="Write something amazing..."
+        readOnly={readOnly}
       />
       <style>
         {`  .ql-toolbar.ql-snow {

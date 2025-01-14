@@ -95,7 +95,6 @@ class Document(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     folder_id = db.Column(db.Integer, db.ForeignKey(
         'folder.id'), nullable=True)  # Document belongs to a folder
-
     in_trash = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
@@ -111,6 +110,21 @@ class Document(db.Model):
             "user_id": self.user_id,
             "folder_id": self.folder_id
         }
+    
+
+class SharedDocument(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.Integer, db.ForeignKey('document.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Optional for public shares
+    share_token = db.Column(db.String(200), unique=True, nullable=False)  # Unique token per share
+    role = db.Column(db.String(10), nullable=False)  # "editor" or "viewer"
+    expiration = db.Column(db.DateTime, nullable=True)  # Expiration date for the share
+
+    document = db.relationship('Document', backref=db.backref('permissions', lazy=True))
+    user = db.relationship('User', backref=db.backref('permissions', lazy=True))
+
+    def __repr__(self):
+        return f'<DocumentPermission document_id={self.document_id}, user_id={self.user_id}, role={self.role}>'
 
 
 # Folder model to organize documents and other folders

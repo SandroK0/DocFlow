@@ -15,6 +15,13 @@ import {
   updateDocument,
   updateFolder,
   getUserStorageInfo,
+  restoreAllFromTrash,
+  deleteAllFromTrash,
+  restoreDocumentFromTrash,
+  restoreFolderFromTrash,
+  getTrashData,
+  deleteDocumentFromTrash,
+  deleteFolderFromTrash,
 } from "../../services/apiService";
 import { Folder, Document } from "../../Types";
 
@@ -63,6 +70,14 @@ interface FileManagerContextType {
     isSelected: boolean,
     isShiftPressed: boolean
   ) => void;
+  trashData: ContentType | null;
+  handleGetTrashData: () => void;
+  handleEmptyTrash: () => void;
+  handleRestoreAllFromTrash: () => void;
+  handleRestoreDocumentFromTrash: (id: number) => void;
+  handleDeleteDocumentFromTrash: (id: number) => void;
+  handleRestoreFolderFromTrash: (id: number) => void;
+  handleDeleteFolderFromTrash: (id: number) => void;
 }
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(
@@ -76,6 +91,8 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
     null
   );
   const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
+
+  const [trashData, setTrashData] = useState<ContentType | null>(null);
 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
@@ -262,6 +279,68 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       .catch((err) => console.error("Error fetching storage info:", err));
   };
 
+  const handleGetTrashData = async () => {
+    const data = await getTrashData();
+    setTrashData(data);
+  };
+
+  const handleEmptyTrash = async () => {
+    try {
+      await deleteAllFromTrash();
+      handleGetTrashData();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleRestoreAllFromTrash = async () => {
+    try {
+      await restoreAllFromTrash();
+      refetchContent();
+      handleGetTrashData();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleRestoreDocumentFromTrash = async (id: number) => {
+    try {
+      await restoreDocumentFromTrash(id);
+      refetchContent();
+      handleGetTrashData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteDocumentFromTrash = async (id: number) => {
+    try {
+      await deleteDocumentFromTrash(id);
+      handleGetTrashData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRestoreFolderFromTrash = async (id: number) => {
+    try {
+      await restoreFolderFromTrash(id);
+      refetchContent();
+      handleGetTrashData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteFolderFromTrash = async (id: number) => {
+    try {
+      await deleteFolderFromTrash(id);
+      handleGetTrashData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     refetchContent();
     getStorageInfo();
@@ -292,6 +371,14 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
         selectItemToggle,
         selectedItems,
         setSelectedItems,
+        trashData,
+        handleGetTrashData,
+        handleEmptyTrash,
+        handleRestoreAllFromTrash,
+        handleRestoreDocumentFromTrash,
+        handleDeleteDocumentFromTrash,
+        handleRestoreFolderFromTrash,
+        handleDeleteFolderFromTrash,
       }}
     >
       {children}
