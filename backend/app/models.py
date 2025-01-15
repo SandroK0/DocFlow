@@ -23,7 +23,6 @@ def format_size(bytes_size):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
     documents = db.relationship('Document', backref='user', lazy=True)
@@ -79,7 +78,6 @@ class User(db.Model):
         return {
             "id": self.id,
             "username": self.username,
-            "email": self.email,
             "storage_summary": self.storage_summary
         }
 
@@ -110,12 +108,13 @@ class Document(db.Model):
             "user_id": self.user_id,
             "folder_id": self.folder_id
         }
-    
+
 
 class SharedDocument(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Optional for public shares
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
+                        nullable=True)  # Optional for public shares
     share_token = db.Column(db.String(200), unique=True, nullable=False)  # Unique token per share
     role = db.Column(db.String(10), nullable=False)  # "editor" or "viewer"
     expiration = db.Column(db.DateTime, nullable=True)  # Expiration date for the share

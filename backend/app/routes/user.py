@@ -20,16 +20,29 @@ def get_current_user():
 def register():
     data = request.get_json()
     username = data.get('username')
-    email = data.get('email')
     password = data.get('password')
+
+    # Validate input data
+    if not username or not password:
+        return jsonify({"error": "Missing required fields", "message": "Username, and password are required to register."}), 400
+
+    if len(password) < 8:
+        return jsonify({"error": "Weak password", "message": "Password must be at least 8 characters long."}), 400
+
+    # Check if the username already exists
     if User.query.filter_by(username=username).first():
-        return jsonify({"message": "Username already exists"}), 400
-    user = User(username=username, email=email)
+        return jsonify({"error": "Conflict", "message": "The username is already taken."}), 409
+
+    # Create and save the user
+    user = User(username=username)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
 
-    return jsonify({"message": "User created"}), 201
+    return jsonify({
+        "message": "User registration successful",
+        "user": {"id": user.id, "username": user.username}
+    }), 201
 
 
 # Login route
@@ -39,17 +52,27 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
+    if not username or not password:
+        return jsonify({"error": "Missing required fields", "message": "Both username and password are required."}), 400
+
     # Retrieve the user from the database
     user = User.query.filter_by(username=username).first()
 
-    if not user or not user.check_password(password):
-        return jsonify({"message": "Invalid credentials"}), 401
+    if not user:
+        return jsonify({"error": "Invalid credentials", "message": "The username you entered does not exist."}), 401
+
+    if not user.check_password(password):
+        return jsonify({"error": "Invalid credentials", "message": "The password you entered is incorrect."}), 401
 
     # Create JWT token with user ID as the subject (identity)
     access_token = create_access_token(
         identity=str(user.id), expires_delta=timedelta(days=1)
     )
-    return jsonify({"access_token": access_token, "user": user.to_dict()}), 200
+    return jsonify({
+        "message": "Login successful",
+        "access_token": access_token,
+        "user": user.to_dict()
+    }), 200
 
 
 @user_bp.route('/storage_info', methods=['GET'])

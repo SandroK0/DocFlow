@@ -48,7 +48,7 @@ const Landing: React.FC = () => {
       {/* Footer */}
       <footer className={styles.footer}>
         <p>
-          &copy; {new Date().getFullYear()} RichTextEditor. All rights reserved.
+          &copy; {new Date().getFullYear()} Fuck You. All rights reserved.
         </p>
       </footer>
     </div>

@@ -3,13 +3,12 @@ import Actions from "./Actions";
 import ItemList from "./ItemList";
 import Storage from "./Storage";
 import Path from "./Path";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function FileManager() {
   const { folderHistory, goBack, handlePathClick, toastMsg, setToastMsg } =
     useFileManager();
-  const [view, setView] = useState<"Grid" | "List">("List");
 
   useEffect(() => {
     if (toastMsg) {
@@ -45,11 +44,9 @@ export default function FileManager() {
       <Actions
         onGoBack={goBack}
         disableGoBack={folderHistory.length === 0}
-        view={view}
-        setView={setView}
       />
       <Path folderHistory={folderHistory} handlePathClick={handlePathClick} />
-      <ItemList view={view} setView={setView} />
+      <ItemList />
       <Storage></Storage>
 
     </div>

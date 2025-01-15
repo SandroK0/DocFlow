@@ -3,24 +3,20 @@ import { Folder, Document } from "../../Types";
 import { useFileManager } from "./useFileManager";
 import Item from "./Item/Item";
 import { useEffect, useState } from "react";
-import { Dispatch, SetStateAction } from "react";
 
-interface ItemListProps {
-  view: "Grid" | "List";
-  setView: Dispatch<SetStateAction<"Grid" | "List">>;
-}
+
+
 
 interface ItemOptions {
   indx: number;
   position: { left: number; top: number };
 }
 
-export default function ItemList(props: ItemListProps) {
+export default function ItemList() {
   const { currentContent, selectItemToggle, selectedItems, setSelectedItems } =
     useFileManager();
   const [showOptions, setShowOptions] = useState<ItemOptions | null>(null);
   const [isShiftPressed, setIsShiftPressed] = useState(false);
-  const { view } = props;
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Shift") {
       setIsShiftPressed(true);
@@ -49,7 +45,7 @@ export default function ItemList(props: ItemListProps) {
 
   return (
     <div
-      className={view === "List" ? styles.listView : styles.gridView}
+      className={styles.listView}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           setSelectedItems([]);
@@ -74,7 +70,6 @@ export default function ItemList(props: ItemListProps) {
                   selectItemToggle(item, isSelected, isShiftPressed)
                 }
                 isSelected={isSelected}
-                view={view}
               />
             );
           }

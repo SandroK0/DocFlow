@@ -29,7 +29,7 @@ function DeleteItemModal(props: DeleteItemModalProps) {
     <>
       <ModalContWrapper closeModal={closeModal}>
         <div className={styles.container}>
-          <h3>Are you sure you want to delete ?</h3>
+          <h3>Are you sure you want to delete {items.length} item{items.length > 1 ? "s" : ""} ?</h3>
           <button className={styles.option} onClick={handleConfirm}>
             Yes
           </button>

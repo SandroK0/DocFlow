@@ -1,35 +1,28 @@
 import React, { useState } from "react";
-import axios from "axios";
 import styles from "../styles/Register.module.css";
 import { NavLink } from "react-router-dom";
-import { API_URL } from "../config";
+import { register } from "../api/apiService";
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [error, setError] = useState("");
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
 
-  const handleRegister = () => {
-    axios
-      .post(`${API_URL}/user/register`, {
-        username,
-        email,
-        password,
-      })
-      .then((resp) => {
-        if (resp.status === 201) {
-          setIsRegistered(true);
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.data.msg) {
-          setMessage(error.response.data.msg);
-        } else {
-          setMessage("Registration failed. Please try again.");
-        }
-      });
+  const handleRegister = async () => {
+    if (password !== repeatPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await register(username, password);
+      console.log(response);
+      setIsRegistered(true);
+    } catch (error: any) {
+      setError(error.response.data.message);
+    }
   };
 
   return (
@@ -46,23 +39,23 @@ const Register: React.FC = () => {
               className={styles.input}
             />
             <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={styles.input}
-            />
-            <input
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={styles.input}
             />
+            <input
+              type="password"
+              placeholder="Repeat Password"
+              value={repeatPassword}
+              onChange={(e) => setRepeatPassword(e.target.value)}
+              className={styles.input}
+            />
             <button className={styles.registerButton} onClick={handleRegister}>
               Register
             </button>
-            {message && <p className={styles.message}>{message}</p>}
+            <p style={{ color: "red", height: "10px", textAlign: "center", marginTop: "5px" }}>{error}</p>
           </>
         ) : (
           <div>

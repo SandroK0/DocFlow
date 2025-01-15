@@ -1,9 +1,7 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import styles from "../../styles/FileManager/Actions.module.css";
 import NewItemModal from "./Modals/NewItemModal";
 import ReactDOM from "react-dom";
-import { CiGrid41 } from "react-icons/ci";
-import { CiBoxList } from "react-icons/ci";
 import { AiOutlinePlus } from "react-icons/ai";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { useFileManager } from "./useFileManager";
@@ -15,16 +13,9 @@ import Trash from "./Trash";
 interface ActionsProps {
   onGoBack: () => void;
   disableGoBack: boolean;
-  view: "Grid" | "List";
-  setView: Dispatch<SetStateAction<"Grid" | "List">>;
 }
 
-export default function Actions({
-  onGoBack,
-  disableGoBack,
-  view,
-  setView,
-}: ActionsProps) {
+export default function Actions({ onGoBack, disableGoBack }: ActionsProps) {
   const [modal, setModal] = useState<
     "New" | "Delete" | "Move" | "Trash" | null
   >(null);
@@ -32,26 +23,26 @@ export default function Actions({
 
   return (
     <>
-      <div style={{ display: "flex", gap: "10px" }} className={styles.actions}>
-        <button onClick={onGoBack} disabled={disableGoBack}>
-          <RiArrowGoBackFill />
-        </button>
-        <button onClick={() => setModal("New")}>
-          <AiOutlinePlus />
-        </button>
-        <button onClick={() => setView(view === "Grid" ? "List" : "Grid")}>
-          {view === "Grid" ? <CiBoxList></CiBoxList> : <CiGrid41></CiGrid41>}
-        </button>
-        <button onClick={() => setModal("Trash")}>
-          {" "}
-          <CiTrash />
-        </button>
-        {selectedItems.length !== 0 && (
-          <div>
-            <button onClick={() => setModal("Delete")}>Delete</button>
-            <button onClick={() => setModal("Move")}>Move</button>
-          </div>
-        )}
+      <div className={styles.actions}>
+        <div className={styles.btnCont}>
+          <button onClick={onGoBack} disabled={disableGoBack}>
+            <RiArrowGoBackFill />
+          </button>
+          <button onClick={() => setModal("New")}>
+            <AiOutlinePlus />
+          </button>
+          {selectedItems.length !== 0 && (
+            <>
+              <button onClick={() => setModal("Delete")}>Delete</button>
+              <button onClick={() => setModal("Move")}>Move</button>
+            </>
+          )}
+        </div>
+        <div className={styles.btnCont}>
+          <button onClick={() => setModal("Trash")}>
+            <CiTrash />
+          </button>
+        </div>
       </div>
       {modal === "New" &&
         ReactDOM.createPortal(

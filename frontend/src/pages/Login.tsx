@@ -1,32 +1,25 @@
 import React, { useState } from "react";
-import axios from "axios";
 import styles from "../styles/Login.module.css";
 import { useNavigate } from "react-router";
-import { API_URL } from "../config";
-
-
+import { login } from "../api/apiService";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate()
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
-    axios
-      .post(`${API_URL}/user/login`, {
-        username,
-        password,
-      })
-      .then((resp) => {
-        const accessToken = resp.data.access_token;
-        if (accessToken) {
-          localStorage.setItem("jwt", accessToken);
-          navigate("/workspace")
-        }
-      })
-      .catch((error) => {
-        console.error("Login failed:", error);
-      });
+  const handleLogin = async () => {
+    try {
+      const response = await login(username, password);
+      const accessToken = response.access_token;
+      if (accessToken) {
+        localStorage.setItem("jwt", accessToken);
+        navigate("/workspace");
+      }
+    } catch (err: any) {
+      setError(err.response.data.message);
+    }
   };
 
   return (
@@ -50,10 +43,10 @@ const Login: React.FC = () => {
         <button className={styles.loginButton} onClick={handleLogin}>
           Login
         </button>
+        <p style={{ color: "red", height: "10px", textAlign: "center", marginTop: "5px" }}>{error}</p>
       </div>
     </div>
   );
 };
 
 export default Login;
-

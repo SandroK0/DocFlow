@@ -5,14 +5,13 @@ import { Folder, Document } from "../../../Types";
 import ModalContWrapper from "../../ModalContWrapper";
 
 function NewItemModal({ closeModal }: { closeModal: () => void }) {
-  const [selectedOption, setSelectedOption] = useState<
-    "Document" | "Folder" | null
-  >(null); // Track user choice
+  const [selectedOption, setSelectedOption] = useState<"Document" | "Folder">(
+    "Document"
+  ); // Track user choice
   const [inputValue, setInputValue] = useState<string>(""); // Track input value
   const [error, setError] = useState<string>("");
 
   const reset = () => {
-    setSelectedOption(null);
     setInputValue("");
     setError("");
   };
@@ -20,17 +19,13 @@ function NewItemModal({ closeModal }: { closeModal: () => void }) {
   const { handleCreateDocument, handleCreateFolder, currentContent } =
     useFileManager();
 
-  const handleOptionSelect = (option: "Document" | "Folder") => {
-    setSelectedOption(option);
-  };
-
   const FolderNameAlrExists = (name: string): boolean => {
     if (!currentContent?.folders) {
       return false;
     }
 
     return currentContent.folders.some(
-      (folder: Folder) => folder.name === name,
+      (folder: Folder) => folder.name === name
     );
   };
 
@@ -40,7 +35,7 @@ function NewItemModal({ closeModal }: { closeModal: () => void }) {
     }
 
     return currentContent.documents.some(
-      (document: Document) => document.title === title,
+      (document: Document) => document.title === title
     );
   };
 
@@ -50,14 +45,13 @@ function NewItemModal({ closeModal }: { closeModal: () => void }) {
         case "Document":
           if (DocumentTitleAlrExists(inputValue)) {
             setError(
-              "Document with that title already exists in current folder.",
+              "Document with that title already exists in current folder."
             );
             break;
           }
           handleCreateDocument(inputValue);
           closeModal();
           reset();
-
           break;
         case "Folder":
           if (FolderNameAlrExists(inputValue)) {
@@ -69,56 +63,60 @@ function NewItemModal({ closeModal }: { closeModal: () => void }) {
           reset();
           break;
         default:
+          setError("Please select a type.");
           break;
       }
+    } else {
+      setError("Please enter a name.");
     }
   };
 
   return (
     <ModalContWrapper closeModal={closeModal}>
       <div className={styles.container}>
-        {!selectedOption ? (
-          <>
-            <h3>Choose an Option</h3>
-            <div
-              className={styles.option}
-              onClick={() => handleOptionSelect("Document")}
-            >
-              Document
-            </div>
-            <div
-              className={styles.option}
-              onClick={() => handleOptionSelect("Folder")}
-            >
-              Folder
-            </div>
-          </>
-        ) : (
-          <>
-            <div>
-              <h3>Create a {selectedOption}</h3>
-              <input
-                type="text"
-                placeholder={`Enter ${selectedOption} name`}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                className={styles.input}
-              />
-              <button onClick={handleSubmit} className={styles.submitButton}>
-                Create
-              </button>
-              <button
-                onClick={() => {
-                  reset();
-                }}
-                className={styles.backButton}
-              >
-                Back
-              </button>
-            </div>
-            <li style={{ color: "red" }}>{error}</li>
-          </>
-        )}
+        <h3>Create a new item</h3>
+
+        <div className={styles.selectionContainer}>
+          <button
+            className={selectedOption === "Document" ? styles.active : ""}
+            onClick={() => setSelectedOption("Document")}
+          >
+            Document
+          </button>
+          <button
+            className={selectedOption === "Folder" ? styles.active : ""}
+            onClick={() => setSelectedOption("Folder")}
+          >
+            Folder
+          </button>
+        </div>
+
+        <>
+          <input
+            type="text"
+            placeholder={`Enter ${selectedOption} name`}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className={styles.input}
+          />
+          <p style={{ color: "red" }}>{error}</p>
+        </>
+
+        {/* Action Buttons */}
+        <div className={styles.btnCont}>
+          <button onClick={handleSubmit} className={styles.button}>
+            Create
+          </button>
+          <button
+            onClick={() => {
+              reset();
+              closeModal();
+            }}
+            className={styles.button}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </ModalContWrapper>
   );

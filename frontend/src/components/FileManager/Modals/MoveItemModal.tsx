@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import styles from "../../../styles/FileManager/MoveModal.module.css";
 import { Folder, Document } from "../../../Types";
 import { FaFolder } from "react-icons/fa";
-import { fetchFolderContent } from "../../../services/apiService";
+import { fetchFolderContent } from "../../../api/apiService";
 import { useFileManager } from "../useFileManager";
 import ModalContWrapper from "../../ModalContWrapper";
 import Path from "../Path";
+import { RiArrowGoBackFill } from "react-icons/ri";
 
 interface MoveItemModalProps {
   items: Array<Document | Folder>;
@@ -16,7 +17,7 @@ interface ContentType {
 }
 
 function MoveItemModal(props: MoveItemModalProps) {
-  const { handleMoveDocument, handleMoveFolder, setSelectedItems } =
+  const { handleMoveDocument, handleMoveFolder, setSelectedItems, selectedItems } =
     useFileManager();
   const { items, closeModal } = props;
   const [showMoveBtn, setShowMoveBtn] = useState<number | null>(null);
@@ -82,10 +83,11 @@ function MoveItemModal(props: MoveItemModalProps) {
   return (
     <ModalContWrapper closeModal={closeModal}>
       <div className={styles.modalCont}>
-        <h3>Moving ...</h3>
+        <h3>Moving {items.length} item{items.length > 1 ? "s" : ""}:</h3>
         <button onClick={() => goBack()} disabled={folderHistory.length === 0}>
-          Back
+          <RiArrowGoBackFill />
         </button>
+
         <Path
           folderHistory={folderHistory}
           handlePathClick={handlePathClick}

@@ -1,5 +1,5 @@
 import { AiOutlineHome } from "react-icons/ai"; // Importing home icon
-import { RiArrowRightSLine } from "react-icons/ri";
+import { RiArrowDropRightLine } from "react-icons/ri";
 import styles from "../../styles/FileManager/Path.module.css";
 import { useFileManager } from "./useFileManager";
 import { useDrop } from "react-dnd";
@@ -72,7 +72,7 @@ export default function Path(props: PathProps) {
       {folderHistory.map((node: Folder, index: number) => (
         <DroppableNode node={node} key={node.id}>
           <div className={styles.Breadcrumb}>
-            {index >= 0 && <RiArrowRightSLine size={25} />}
+            {index >= 0 && <RiArrowDropRightLine size={25} />}
             <span
               className={
                 index === folderHistory.length - 1

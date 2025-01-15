@@ -4,9 +4,7 @@ export default function Storage() {
 
   return (
     <div>
-      <div>
-        {storageState?.used}/ {storageState?.total}
-      </div>
+      {storageState?.used}/ {storageState?.total}
     </div>
   );
 }

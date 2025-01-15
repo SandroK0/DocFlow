@@ -29,7 +29,6 @@
 .Breadcrumb {
   display: flex;
   align-items: center;
-  gap: 16px;
 }
 
 .Separator {
@@ -44,7 +43,7 @@
 .Crumb {
   position: relative;
   cursor: pointer;
-  color: #333;
+  color: #6e6e6e;
   text-decoration: none;
   padding: 4px 8px;
   border-radius: 12px;
@@ -53,12 +52,11 @@
 
 .Crumb:hover {
   color: #007bff;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .ActiveCrumb {
-  color: #fff; /* white text on active */
-  background-color: #000; /* black background */
+  color: #000; /* black background */
   font-weight: bold;
   padding: 4px 8px;
   border-radius: 12px;

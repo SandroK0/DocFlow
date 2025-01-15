@@ -1,10 +1,15 @@
 .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
   background-color: #ffffff;
-  width: 500px;
-  height: 300px;
+  width: fit-content;
+  min-width: 500px;
   margin: auto;
   padding: 30px;
-  border-radius: 16px; /* Slightly more rounded corners for a modern feel */
+  border-radius: 16px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow for emphasis */
   text-align: center;
   position: absolute;
@@ -20,21 +25,85 @@ h3 {
   font-weight: bold;
 }
 
-.option {
-  margin: 10px 0;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 15px;
-  border: 1px solid #dddddd;
-  border-radius: 10px; /* More rounded edges */
-  background-color: #f9fbff;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+.btnCont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.option:hover {
-  background-color: #e5efff;
-  border-color: #8bafff;
-  transform: scale(1.02); /* Slight scaling for interactivity */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  color: #333;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.button:active {
+  background: #f2f2f2;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: scale(0.98);
+}
+
+.button:focus {
+  outline: none;
+  border: 1px solid #666;
+  box-shadow: 0 0 3px #666;
+}
+
+/* Disabled Style */
+.button:disabled {
+  color: rgba(0, 0, 0, 0.3);
+  background: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.selectionContainer {
+  display: flex;
+  border: 1px solid #666;
+  /* border-radius: 12px; */
+  z-index: 10;
+}
+
+.selectionContainer button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  color: #333;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.selectionContainer button:hover {
+  background: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.selectionContainer button.active {
+  background: #f2f2f2;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: scale(0.98);
 }
 
 .input {
@@ -49,55 +118,7 @@ h3 {
 }
 
 .input:focus {
-  border-color: #4caf50; /* Green focus for clarity */
-  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+  border-color: #333333; /* Green focus for clarity */
+  box-shadow: 0 0 6px rgba(34, 34, 34, 0.5);
   outline: none;
-}
-
-.submitButton {
-  padding: 12px 25px;
-  margin: 10px 5px;
-  border: none;
-  background-color: #4caf50;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.submitButton:hover {
-  background-color: #45a049;
-  transform: translateY(-2px); /* Subtle elevation on hover */
-}
-
-.backButton {
-  padding: 12px 25px;
-  margin: 10px 5px;
-  border: none;
-  background-color: #f44336;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.backButton:hover {
-  background-color: #e53935;
-  transform: translateY(-2px); /* Subtle elevation on hover */
-}
-
-button {
-  outline: none;
-  font-family: inherit; /* Ensure font consistency */
-}
-
-body {
-  font-family: "Arial", sans-serif;
-  background-color: #f4f4f9; /* Light background for the overall page */
-  margin: 0;
-  padding: 0;
 }

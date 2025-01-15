@@ -8,7 +8,7 @@ import {
   getSharedDocument,
   updateDocument,
   updateSharedDocument,
-} from "../services/apiService";
+} from "../api/apiService";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import ShareDocumentModal from "../components/ShareDocumentModal";
 import ReactDOM from "react-dom";
@@ -25,7 +25,6 @@ export default function Editing() {
   );
   const [currentDocument, setCurrentDocument] = useState<Document | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [shareLink, setShareLink] = useState<string | null>(null);
   const [role, setRole] = useState<Role>("viewer");
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
 
@@ -47,7 +46,10 @@ export default function Editing() {
         );
         setPrevDocumentState(currentDocument);
       } catch (error: any) {
-        console.log(error.response.data);
+        setToastMsg(
+          `Error while saving document: ${error.response.data.message}`
+        );
+
       }
     } else {
       try {
@@ -137,19 +139,12 @@ export default function Editing() {
           value={currentDocument?.title}
           className={styles.title}
           onChange={(e) => handleInpChange(e.target.value)}
-          disabled={share_token ? true : false}
+          disabled={role === "viewer" ? true : false}
         />
-        <div>
-          {shareLink && (
-            <div className={styles.saveBtn} style={{ right: "200px" }}>
-              {shareLink}
-            </div>
-          )}
-
+        <div className={styles.rightButtons}>
           {role === "owner" && (
             <button
               onClick={() => setShowShareModal(true)}
-              className={styles.saveBtn}
               style={{ right: "100px" }}
               disabled={share_token ? true : false}
             >
@@ -159,7 +154,6 @@ export default function Editing() {
           <button
             onClick={handleSave}
             disabled={prevDocumentState === currentDocument}
-            className={styles.saveBtn}
           >
             Save
           </button>

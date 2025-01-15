@@ -19,7 +19,6 @@ interface ItemProps {
   isFolder: boolean;
   indx: number;
   showOptions: ItemOptions | null;
-  view: "Grid" | "List";
   setShowOptions: (options: ItemOptions | null) => void;
   selectItemToggle: () => void;
   isSelected: boolean;

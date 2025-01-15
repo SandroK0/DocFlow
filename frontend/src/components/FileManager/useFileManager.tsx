@@ -22,7 +22,7 @@ import {
   getTrashData,
   deleteDocumentFromTrash,
   deleteFolderFromTrash,
-} from "../../services/apiService";
+} from "../../api/apiService";
 import { Folder, Document } from "../../Types";
 
 interface ContentType {
