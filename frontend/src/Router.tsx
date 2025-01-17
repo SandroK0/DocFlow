@@ -32,17 +32,17 @@ const Router: React.FC = () => {
         {/* Redirect logged-in users away from auth-related routes */}
         <Route element={<RedirectIfLoggedIn />}>
           <Route index element={<Landing />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Route>
 
         {/* Protected workspace route */}
         <Route element={<ProtectedRoute />}>
-          <Route path="workspace" element={<Workspace />} />
-          <Route path="workspace/editing/:docId" element={<Editing />} />
+          <Route path="/workspace" element={<Workspace />} />
+          <Route path="/workspace/editing/:docId" element={<Editing />} />
         </Route>
         <Route
-          path="document/shared/:share_token"
+          path="/document/shared/:share_token"
           element={<Editing></Editing>}
         ></Route>
       </Route>

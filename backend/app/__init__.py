@@ -15,7 +15,6 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
     load_dotenv()
-    print("DATABASE_URL:", os.getenv('DATABASE_URL'))
 
     # Load configuration from environment variables
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
@@ -27,14 +26,17 @@ def create_app():
     jwt.init_app(app)
     migrate.init_app(app, db)
 
-    # Enable CORS for all routes
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Register blueprints (routes)
     from app.routes.user import user_bp
     from app.routes.documents import documents_bp
     from app.routes.folders import folders_bp
     from app.routes.trash import trash_bp
+
+    @app.route("/")
+    def index():
+        return "This is python backend server for DockFlow."
 
     app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(documents_bp, url_prefix='/documents')

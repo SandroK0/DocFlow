@@ -105,6 +105,34 @@ export default function Editing() {
     }
   }
 
+
+  const printPDF = () => {
+    if (currentDocument) {
+
+      // Create a new window and write the content into it
+      const printWindow = window.open("", "_blank");
+
+
+      if (printWindow) {
+        printWindow.document.title = currentDocument.title || "Default Document Name";
+        printWindow.document.write(`${currentDocument?.content}`);
+
+        // Close the document to trigger rendering
+        printWindow.document.close();
+
+        // Trigger the print dialog
+        printWindow.print();
+
+        // Optionally close the window after printing
+        printWindow.close();
+      }
+    }
+  };
+
+
+
+
+
   useEffect(() => {
     if (share_token) {
       viewSharedDocument(share_token);
@@ -151,6 +179,12 @@ export default function Editing() {
               Share
             </button>
           )}
+          <button
+            onClick={printPDF}
+          >
+            Export PDF
+          </button>
+
           <button
             onClick={handleSave}
             disabled={prevDocumentState === currentDocument}

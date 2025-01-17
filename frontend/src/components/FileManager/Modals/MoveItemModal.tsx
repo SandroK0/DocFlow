@@ -17,7 +17,7 @@ interface ContentType {
 }
 
 function MoveItemModal(props: MoveItemModalProps) {
-  const { handleMoveDocument, handleMoveFolder, setSelectedItems, selectedItems } =
+  const { handleMoveDocument, handleMoveFolder, setSelectedItems } =
     useFileManager();
   const { items, closeModal } = props;
   const [showMoveBtn, setShowMoveBtn] = useState<number | null>(null);

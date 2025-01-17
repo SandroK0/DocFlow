@@ -24,7 +24,6 @@ interface DraggedItem {
 }
 
 
-
 const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
   item,
   isFolder,
@@ -40,7 +39,6 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
   >(() => ({
     type: isFolder ? ItemType.FOLDER : ItemType.DOCUMENT,
     item: () => {
-      console.log("Dragging item:", item);
       return { item, type: isFolder ? ItemType.FOLDER : ItemType.DOCUMENT };
     },
     collect: (monitor) => ({
@@ -54,23 +52,11 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
     drop: (draggedItem: DraggedItem) => {
       if (draggedItem.type === ItemType.DOCUMENT) {
         handleMoveDocument(draggedItem.item as Document, item as Folder);
-        console.log(
-          "Dropped document:",
-          (draggedItem.item as Document).id,
-          "into folder:",
-          (item as Folder).id
-        );
       } else if (
         draggedItem.type === ItemType.FOLDER &&
         (draggedItem.item as Folder).id !== (item as Folder).id
       ) {
         handleMoveFolder(draggedItem.item as Folder, item as Folder);
-        console.log(
-          "Dropped folder:",
-          (draggedItem.item as Folder).id,
-          "into folder:",
-          (item as Folder).id
-        );
       }
     },
     canDrop: () => isFolder, // Only folders can be drop targets
@@ -79,7 +65,7 @@ const ItemDragDropWrapper: React.FC<ItemDragDropWrapperProps> = ({
   return (
     <div
       ref={(node) => drag(drop(node))} // Combine drag and drop refs
-      style={{ opacity: isDragging ? 0.5 : 1 }} // Style for dragging
+      style={isDragging ? { opacity: 0.5 } : {}} // Style for dragging
     >
       {children}
     </div>
