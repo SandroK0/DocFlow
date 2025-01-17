@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "../../../styles/FileManager/New.module.css"; // Assuming you have a CSS module
+import styles from "../../../styles/FileManager/NewModal.module.css";
 import { useFileManager } from "../useFileManager";
 import { Folder, Document } from "../../../Types";
 import ModalContWrapper from "../../ModalContWrapper";

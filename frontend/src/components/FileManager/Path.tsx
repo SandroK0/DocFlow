@@ -57,9 +57,8 @@ export default function Path(props: PathProps) {
       {
         <DroppableNode node={null}>
           <div
-            className={`${styles.Breadcrumb} ${
-              folderHistory.length === 0 ? styles.ActiveCrumb : styles.Crumb
-            }`}
+            className={`${styles.Breadcrumb} ${folderHistory.length === 0 ? styles.ActiveCrumb : styles.Crumb
+              }`}
             onClick={() => handlePathClick(-1)}
             role="button"
             tabIndex={0}

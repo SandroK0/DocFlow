@@ -1,29 +1,28 @@
 
+/* Animation for context menu appearance */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .itemOptions {
   position: fixed;
-
   background: #f9fbff;
   display: flex;
   flex-direction: column;
-
   width: 200px;
   height: fit-content;
-
   z-index: 10;
+  animation: fadeInDown 0.3s ease-out;
 }
 
-@keyframes slideInFromLeft {
-  from {
-    transform: translateX(-50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
+/* Basic Button Style */
 .button {
   display: inline-block;
   padding: 10px 20px;
@@ -38,17 +37,21 @@
   transition: all 0.3s ease;
 }
 
+/* Button Hover Effect */
 .button:hover {
   background: #cbcbcb;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateX(5px); /* Added a slight horizontal shift on hover */
 }
 
+/* Button Active Effect */
 .button:active {
   background: #f2f2f2;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
   transform: scale(0.98);
 }
 
+/* Button Focus Effect */
 .button:focus {
   outline: none;
   border: 1px solid #666;
@@ -63,3 +66,4 @@
   box-shadow: none;
   cursor: not-allowed;
 }
+

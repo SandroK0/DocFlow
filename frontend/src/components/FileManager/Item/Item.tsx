@@ -90,6 +90,7 @@ const Item: React.FC<ItemProps> = ({
     }, 0);
   };
 
+  console.log(item);
   return (
     <>
       <ItemDragDropWrapper

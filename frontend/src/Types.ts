@@ -21,4 +21,6 @@ export interface Folder {
   parent_id: number;
   subfolders: Subfolder[];
   documents: Document[];
+  created_at: string;
+  updated_at: string;
 }

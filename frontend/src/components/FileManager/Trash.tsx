@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Folder, Document } from "../../Types";
 import ModalContWrapper from "../ModalContWrapper";
 import { FaFolder } from "react-icons/fa";
-import styles from "../../styles/FileManager/MoveModal.module.css";
+import styles from "../../styles/FileManager/Trash.module.css";
 import { useFileManager } from "./useFileManager";
+import { IoDocumentOutline } from "react-icons/io5";
 
 interface TrashProps {
   close: () => void;
@@ -46,7 +47,7 @@ export default function Trash(props: TrashProps) {
 
   return (
     <ModalContWrapper closeModal={close}>
-      <div className={styles.modalCont}>
+      <div className={styles.container}>
         <h3>Trash</h3>
         <div className={styles.folderCont}>
           {trashData &&
@@ -62,7 +63,7 @@ export default function Trash(props: TrashProps) {
                     onMouseLeave={() => setShowRestoreBtn(null)}
                   >
                     <div className={styles.folderContent}>
-                      <FaFolder />
+                      {isFolder ? <FaFolder /> : <IoDocumentOutline />}
                       <span>
                         {isFolder
                           ? (item as Folder).name
@@ -71,6 +72,7 @@ export default function Trash(props: TrashProps) {
                     </div>
                     {showRestoreBtn === key && (
                       <button
+                        className={styles.button}
                         onClick={() =>
                           handleRestoreClick(
                             isFolder ? (item as Folder) : (item as Document)
@@ -85,9 +87,13 @@ export default function Trash(props: TrashProps) {
               }
             )}
         </div>
-        <div>
-          <button onClick={(e) => restoreAllClick(e)}>Restore All</button>
-          <button onClick={(e) => deleteAllClick(e)}>Delete All</button>
+        <div className={styles.btnCont}>
+          <button className={styles.button} onClick={(e) => restoreAllClick(e)}>
+            Restore All
+          </button>
+          <button className={styles.button} onClick={(e) => deleteAllClick(e)}>
+            Delete All
+          </button>
         </div>
       </div>
     </ModalContWrapper>

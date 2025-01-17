@@ -82,12 +82,11 @@ function MoveItemModal(props: MoveItemModalProps) {
 
   return (
     <ModalContWrapper closeModal={closeModal}>
-      <div className={styles.modalCont}>
+      <div className={styles.container}>
         <h3>Moving {items.length} item{items.length > 1 ? "s" : ""}:</h3>
-        <button onClick={() => goBack()} disabled={folderHistory.length === 0}>
+        <button onClick={() => goBack()} disabled={folderHistory.length === 0} className={styles.button}>
           <RiArrowGoBackFill />
         </button>
-
         <Path
           folderHistory={folderHistory}
           handlePathClick={handlePathClick}
@@ -118,13 +117,13 @@ function MoveItemModal(props: MoveItemModalProps) {
                   <span>{folder.name}</span>
                 </div>
                 {showMoveBtn === folder.id && (
-                  <button onClick={() => handleMoveClick(folder)}>move</button>
+                  <button onClick={() => handleMoveClick(folder)} className={styles.button} >move</button>
                 )}
               </div>
             );
           })}
         </div>
-        <button onClick={() => handleMoveClick(peek())}>Place</button>
+        <button className={styles.button} onClick={() => handleMoveClick(peek())}>Place</button>
       </div>
     </ModalContWrapper>
   );

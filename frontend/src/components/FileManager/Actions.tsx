@@ -33,8 +33,8 @@ export default function Actions({ onGoBack, disableGoBack }: ActionsProps) {
           </button>
           {selectedItems.length !== 0 && (
             <>
-              <button onClick={() => setModal("Delete")}>Delete</button>
-              <button onClick={() => setModal("Move")}>Move</button>
+              <button onClick={() => setModal("Delete")} >Delete</button>
+              <button onClick={() => setModal("Move")} >Move</button>
             </>
           )}
         </div>
@@ -43,33 +43,40 @@ export default function Actions({ onGoBack, disableGoBack }: ActionsProps) {
             <CiTrash />
           </button>
         </div>
-      </div>
+      </div >
       {modal === "New" &&
         ReactDOM.createPortal(
           <NewItemModal closeModal={() => setModal(null)} />,
           document.body
-        )}
-      {modal === "Delete" &&
+        )
+      }
+      {
+        modal === "Delete" &&
         ReactDOM.createPortal(
           <DeleteItemModal
             items={selectedItems}
             closeModal={() => setModal(null)}
           />,
           document.body
-        )}
-      {modal === "Move" &&
+        )
+      }
+      {
+        modal === "Move" &&
         ReactDOM.createPortal(
           <MoveItemModal
             closeModal={() => setModal(null)}
             items={selectedItems}
           />,
           document.body
-        )}
-      {modal === "Trash" &&
+        )
+      }
+      {
+        modal === "Trash" &&
         ReactDOM.createPortal(
           <Trash close={() => setModal(null)}></Trash>,
           document.body
-        )}
+        )
+      }
     </>
   );
 }

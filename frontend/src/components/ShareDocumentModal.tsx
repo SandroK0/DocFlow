@@ -52,11 +52,16 @@ export default function ShareDocumentModal(props: ShareDocumentModalProps) {
             <option value="editor">Editor</option>
             <option value="viewer">Viewer</option>
           </select>
+          <button
+            onClick={() => handleShareClick(document.id)}
+            className={styles.shareButton}
+          >
+            Generate Link
+          </button>
         </div>
         <div
-          className={`${styles.shareLinkContainer} ${
-            shareLink ? styles.visible : ""
-          }`}
+          className={`${styles.shareLinkContainer} ${shareLink ? styles.visible : ""
+            }`}
         >
           {shareLink && (
             <>
@@ -71,17 +76,6 @@ export default function ShareDocumentModal(props: ShareDocumentModalProps) {
               </button>
             </>
           )}
-        </div>
-        <div className={styles.actions}>
-          <button
-            onClick={() => handleShareClick(document.id)}
-            className={styles.shareButton}
-          >
-            Generate Link
-          </button>
-          <button onClick={closeModal} className={styles.doneButton}>
-            Done
-          </button>
         </div>
       </div>
     </ModalContWrapper>

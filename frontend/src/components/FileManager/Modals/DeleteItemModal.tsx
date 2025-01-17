@@ -1,4 +1,4 @@
-import styles from "../../../styles/FileManager/New.module.css";
+import styles from "../../../styles/FileManager/DeleteModal.module.css";
 import { useFileManager } from "../useFileManager";
 import { Folder, Document } from "../../../Types";
 import ModalContWrapper from "../../ModalContWrapper";
@@ -30,12 +30,14 @@ function DeleteItemModal(props: DeleteItemModalProps) {
       <ModalContWrapper closeModal={closeModal}>
         <div className={styles.container}>
           <h3>Are you sure you want to delete {items.length} item{items.length > 1 ? "s" : ""} ?</h3>
-          <button className={styles.option} onClick={handleConfirm}>
-            Yes
-          </button>
-          <button className={styles.option} onClick={closeModal}>
-            No
-          </button>
+          <div className={styles.btnCont}>
+            <button className={styles.button} onClick={handleConfirm}>
+              Yes
+            </button>
+            <button className={styles.button} onClick={closeModal}>
+              No
+            </button>
+          </div>
         </div>
       </ModalContWrapper>
     </>
