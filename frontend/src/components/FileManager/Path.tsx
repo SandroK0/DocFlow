@@ -4,6 +4,8 @@ import styles from "../../styles/FileManager/Path.module.css";
 import { useFileManager } from "./useFileManager";
 import { useDrop } from "react-dnd";
 import { Document, Folder } from "../../Types";
+import { useEffect, useRef, useState } from "react";
+import { DiVim } from "react-icons/di";
 
 const ItemType = {
   FOLDER: "folder",
@@ -51,9 +53,35 @@ const DroppableNode: React.FC<DroppableNodeProps> = ({ node, children }) => {
 
 export default function Path(props: PathProps) {
   const { folderHistory, handlePathClick } = props;
+  const [hide, setHide] = useState<boolean>(false)
+  const contRef = useRef<HTMLElement | null>(null);
+
+  // console.log("Parent Width", contRef.current?.offsetWidth)
+  // console.log("Child Width", contRef.current?.)
+
+  useEffect(() => {
+
+    if (contRef.current) {
+
+      let parrentWidth = contRef.current.offsetWidth
+      console.log("Parent Width:", parrentWidth);
+      let innerWidth = 0
+      const childElements = Array.from(contRef.current.children); // Get child elements
+      childElements.forEach((child) => {
+        const childElement = child as HTMLElement; // Cast to HTMLElement
+        innerWidth += childElement.offsetWidth
+        // console.log(`Child ${index + 1} Width:`, childElement.offsetWidth);
+      });
+      console.log("innerContentWidth:", innerWidth)
+
+      if (innerWidth > parrentWidth) {
+        setHide(true)
+      }
+    }
+  }, [folderHistory])
 
   return (
-    <nav className={styles.Path} aria-label="Breadcrumb">
+    <nav className={styles.Path} aria-label="Breadcrumb" ref={contRef}>
       {
         <DroppableNode node={null}>
           <div
@@ -68,28 +96,34 @@ export default function Path(props: PathProps) {
           </div>
         </DroppableNode>
       }
-      {folderHistory.map((node: Folder, index: number) => (
-        <DroppableNode node={node} key={node.id}>
-          <div className={styles.Breadcrumb}>
-            {index >= 0 && <RiArrowDropRightLine size={25} />}
-            <span
-              className={
-                index === folderHistory.length - 1
-                  ? styles.ActiveCrumb
-                  : styles.Crumb
-              }
-              onClick={() =>
-                index !== folderHistory.length - 1 && handlePathClick(node.id)
-              }
-              role="button"
-              tabIndex={0}
-              aria-label={`Navigate to ${node.name}`}
-            >
-              {node.name}
-            </span>
-          </div>
-        </DroppableNode>
-      ))}
+
+      <div className={styles.pathCont}>
+        {folderHistory.map((node: Folder, index: number) =>
+
+        (
+          <DroppableNode node={node} key={node.id}>
+            <div className={styles.Breadcrumb}>
+              {index >= 0 && "/"}
+              <span
+                className={
+                  index === folderHistory.length - 1
+                    ? styles.ActiveCrumb
+                    : styles.Crumb
+                }
+                onClick={() =>
+                  index !== folderHistory.length - 1 && handlePathClick(node.id)
+                }
+                role="button"
+                tabIndex={0}
+                aria-label={`Navigate to ${node.name}`}
+              >
+                {node.name}
+              </span>
+            </div>
+          </DroppableNode>
+        )
+        )}
+      </div>
     </nav>
   );
 }

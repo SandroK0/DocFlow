@@ -15,6 +15,15 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
+
+.pathCont{
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  overflow: hidden;
+} 
+
+
 .HomeIcon {
   color: #333;
   cursor: pointer;
