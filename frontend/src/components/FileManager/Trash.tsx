@@ -12,14 +12,16 @@ interface TrashProps {
 
 export default function Trash(props: TrashProps) {
   const { close } = props;
-  const [showRestoreBtn, setShowRestoreBtn] = useState<string | null>(null);
+  const [showActionButtons, setShowActionButtons] = useState<string | null>(null);
 
   const {
     handleGetTrashData,
     handleRestoreAllFromTrash,
     handleEmptyTrash,
     handleRestoreDocumentFromTrash,
+    handleDeleteDocumentFromTrash,
     handleRestoreFolderFromTrash,
+    handleDeleteFolderFromTrash,
     trashData,
   } = useFileManager();
 
@@ -41,6 +43,16 @@ export default function Trash(props: TrashProps) {
     }
   };
 
+
+  const handleDeleteClick = (item: Document | Folder) => {
+    if ("name" in item) {
+      handleDeleteFolderFromTrash(item.id);
+    } else {
+      handleDeleteDocumentFromTrash(item.id);
+    }
+
+  }
+
   useEffect(() => {
     handleGetTrashData();
   }, []);
@@ -59,8 +71,8 @@ export default function Trash(props: TrashProps) {
                   <div
                     key={key}
                     className={styles.folder}
-                    onMouseEnter={() => setShowRestoreBtn(key)}
-                    onMouseLeave={() => setShowRestoreBtn(null)}
+                    onMouseEnter={() => setShowActionButtons(key)}
+                    onMouseLeave={() => setShowActionButtons(null)}
                   >
                     <div className={styles.folderContent}>
                       {isFolder ? <FaFolder /> : <IoDocumentOutline />}
@@ -70,17 +82,29 @@ export default function Trash(props: TrashProps) {
                           : (item as Document).title}
                       </span>
                     </div>
-                    {showRestoreBtn === key && (
-                      <button
-                        className={styles.button}
-                        onClick={() =>
-                          handleRestoreClick(
-                            isFolder ? (item as Folder) : (item as Document)
-                          )
-                        }
-                      >
-                        restore
-                      </button>
+                    {showActionButtons === key && (
+                      <div>
+                        <button
+                          className={styles.button}
+                          onClick={() =>
+                            handleRestoreClick(
+                              isFolder ? (item as Folder) : (item as Document)
+                            )
+                          }
+                        >
+                          restore
+                        </button>
+                        <button
+                          className={styles.button}
+                          onClick={() =>
+                            handleDeleteClick(
+                              isFolder ? (item as Folder) : (item as Document)
+                            )
+                          }
+                        >
+                          delete
+                        </button>
+                      </div>
                     )}
                   </div>
                 );

@@ -53,35 +53,8 @@ const DroppableNode: React.FC<DroppableNodeProps> = ({ node, children }) => {
 
 export default function Path(props: PathProps) {
   const { folderHistory, handlePathClick } = props;
-  const [hide, setHide] = useState<boolean>(false)
-  const contRef = useRef<HTMLElement | null>(null);
-
-  // console.log("Parent Width", contRef.current?.offsetWidth)
-  // console.log("Child Width", contRef.current?.)
-
-  useEffect(() => {
-
-    if (contRef.current) {
-
-      let parrentWidth = contRef.current.offsetWidth
-      console.log("Parent Width:", parrentWidth);
-      let innerWidth = 0
-      const childElements = Array.from(contRef.current.children); // Get child elements
-      childElements.forEach((child) => {
-        const childElement = child as HTMLElement; // Cast to HTMLElement
-        innerWidth += childElement.offsetWidth
-        // console.log(`Child ${index + 1} Width:`, childElement.offsetWidth);
-      });
-      console.log("innerContentWidth:", innerWidth)
-
-      if (innerWidth > parrentWidth) {
-        setHide(true)
-      }
-    }
-  }, [folderHistory])
-
   return (
-    <nav className={styles.Path} aria-label="Breadcrumb" ref={contRef}>
+    <nav className={styles.Path} aria-label="Breadcrumb" >
       {
         <DroppableNode node={null}>
           <div

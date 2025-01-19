@@ -42,7 +42,7 @@ def create_document():
         # This will raise ValueError if duplicate found
         # Check if a document with the same title already exists for this user
         existing_document = Document.query.filter_by(
-            title=document.title, user_id=user.id).first()
+            title=document.title, user_id=user.id, folder_id=folder_id).first()
 
         if existing_document:
             raise ValueError(
@@ -100,29 +100,29 @@ def update_document(id):
     new_title = data.get('title', document.title)
     new_folder_id = data.get('folder_id', document.folder_id)
 
-    if new_title != document.title:
-        # Check for duplicate document titles in the target folder
-        duplicate_document = Document.query.filter_by(
-            title=new_title,
-            folder_id=new_folder_id,
-            user_id=user.id
-        ).filter(Document.id != id).first()
+    print(new_folder_id)
+    print(new_title)
 
-        if duplicate_document:
-            return jsonify({"message": "A document with the same title already exists in the target folder."}), 400
+    # Check for duplicate document titles in the target folder
 
-        # Update document details
-        document.title = new_title
+    duplicate_document = Document.query.filter_by(
+        title=new_title,
+        folder_id=new_folder_id,
+        user_id=user.id
+    ).filter(Document.id != id).first()
 
+    if duplicate_document:
+        return jsonify({"message": "A document with the same title already exists in the target folder."}), 400
+
+    document.title = new_title
     new_content = data.get('content')
+    document.folder_id = new_folder_id
 
     if new_content:
         if user.has_storage_space(new_content):
             document.content = new_content
         else:
             return jsonify({"message": "Not enough storage space"}), 400
-
-    document.folder_id = new_folder_id
 
     db.session.commit()
     return jsonify({"message": "Document updated successfully"}), 200

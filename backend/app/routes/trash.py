@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models import User, Folder, Document, db
+from app.models import SharedDocument, User, Folder, Document, db
+from app.routes.documents import share_document
 
 trash_bp = Blueprint('trash', __name__)
 
@@ -13,10 +14,20 @@ def get_current_user():
     return user, None
 
 
+def handle_delete_document(document):
+    sharings = SharedDocument.query.filter_by(
+        document_id=document.id
+    ).all()
+
+    for sharing in sharings:
+        db.session.delete(sharing)
+    db.session.delete(document)
+
+
 def delete_nested_folders(folder):
     """Recursively delete all nested folders and documents."""
     for document in folder.documents:
-        db.session.delete(document)
+        handle_delete_document(document)
     for subfolder in folder.children:
         delete_nested_folders(subfolder)
     db.session.delete(folder)
@@ -53,7 +64,7 @@ def delete_document(id):
     if document.user_id != user.id:
         return jsonify({"message": "Permission denied for this document"}), 403
 
-    db.session.delete(document)
+    handle_delete_document(document)
     db.session.commit()
     return jsonify({"message": "Document deleted successfully"}), 200
 
@@ -117,13 +128,14 @@ def delete_all():
 
     root_folders = Folder.query.filter_by(
         user_id=user.id, parent_id=None, in_trash=True).all()
+
     root_documents = Document.query.filter_by(
         user_id=user.id, folder_id=None, in_trash=True).all()
 
     for folder in root_folders:
-        delete_nested_folders(folder)
+        delete_nested_folders(folder, user.id)
     for document in root_documents:
-        db.session.delete(document)
+        handle_delete_document(document)
 
     db.session.commit()
     return jsonify({"message": "Trash cleaned successfully"}), 200

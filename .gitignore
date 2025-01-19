@@ -2,3 +2,6 @@ start.sh
 stop.sh
 todo.txt
 node_modules
+
+docker-compose.yml
+Dockerfile
