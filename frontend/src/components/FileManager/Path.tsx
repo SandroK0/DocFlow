@@ -1,11 +1,8 @@
 import { AiOutlineHome } from "react-icons/ai"; // Importing home icon
-import { RiArrowDropRightLine } from "react-icons/ri";
 import styles from "../../styles/FileManager/Path.module.css";
 import { useFileManager } from "./useFileManager";
 import { useDrop } from "react-dnd";
 import { Document, Folder } from "../../Types";
-import { useEffect, useRef, useState } from "react";
-import { DiVim } from "react-icons/di";
 
 const ItemType = {
   FOLDER: "folder",
@@ -54,12 +51,13 @@ const DroppableNode: React.FC<DroppableNodeProps> = ({ node, children }) => {
 export default function Path(props: PathProps) {
   const { folderHistory, handlePathClick } = props;
   return (
-    <nav className={styles.Path} aria-label="Breadcrumb" >
+    <nav className={styles.Path} aria-label="Breadcrumb">
       {
         <DroppableNode node={null}>
           <div
-            className={`${styles.Breadcrumb} ${folderHistory.length === 0 ? styles.ActiveCrumb : styles.Crumb
-              }`}
+            className={`${styles.Breadcrumb} ${
+              folderHistory.length === 0 ? styles.ActiveCrumb : styles.Crumb
+            }`}
             onClick={() => handlePathClick(-1)}
             role="button"
             tabIndex={0}
@@ -71,9 +69,7 @@ export default function Path(props: PathProps) {
       }
 
       <div className={styles.pathCont}>
-        {folderHistory.map((node: Folder, index: number) =>
-
-        (
+        {folderHistory.map((node: Folder, index: number) => (
           <DroppableNode node={node} key={node.id}>
             <div className={styles.Breadcrumb}>
               {index >= 0 && "/"}
@@ -94,8 +90,7 @@ export default function Path(props: PathProps) {
               </span>
             </div>
           </DroppableNode>
-        )
-        )}
+        ))}
       </div>
     </nav>
   );

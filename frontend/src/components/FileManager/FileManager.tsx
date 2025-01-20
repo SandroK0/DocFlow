@@ -5,6 +5,16 @@ import Storage from "./Storage";
 import Path from "./Path";
 import { useEffect } from "react";
 import { Bounce, toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Ensure you include Toastify styles
+
+const CustomToast = ({ title, message }: { title: string; message: string }) => (
+  <div>
+    <strong style={{ fontSize: "16px" }}>{title}</strong>
+    <div style={{ marginTop: "4px", fontSize: "14px", color: "#FFF" }}>
+      {message}
+    </div>
+  </div>
+);
 
 export default function FileManager() {
   const { folderHistory, goBack, handlePathClick, toastMsg, setToastMsg } =
@@ -12,11 +22,17 @@ export default function FileManager() {
 
   useEffect(() => {
     if (toastMsg) {
-      toast(toastMsg, {
-        onClose: () => setToastMsg(null),
-      });
+      if (toastMsg.title && toastMsg.message) {
+        toast(<CustomToast title={toastMsg.title} message={toastMsg.message} />, {
+          onClose: () => setToastMsg(null),
+        });
+      } else {
+        toast(toastMsg, {
+          onClose: () => setToastMsg(null),
+        });
+      }
     }
-  }, [toastMsg]);
+  }, [toastMsg, setToastMsg]);
 
   return (
     <div
@@ -37,18 +53,15 @@ export default function FileManager() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme="dark"
         transition={Bounce}
-        style={{ fontFamily: "monospace" }}
       />
-      <Actions
-        onGoBack={goBack}
-        disableGoBack={folderHistory.length === 0}
-      />
+      <Actions onGoBack={goBack} disableGoBack={folderHistory.length === 0} />
       <Path folderHistory={folderHistory} handlePathClick={handlePathClick} />
       <ItemList />
-      <Storage></Storage>
-
+      <Storage />
     </div>
   );
 }
+
+

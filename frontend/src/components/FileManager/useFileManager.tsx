@@ -61,8 +61,8 @@ interface FileManagerContextType {
   goBack: () => void;
   getPath: () => string;
   handlePathClick: (folder_id: number) => void;
-  toastMsg: string | null;
-  setToastMsg: Dispatch<SetStateAction<string | null>>;
+  toastMsg: any | null;
+  setToastMsg: Dispatch<SetStateAction<any | null>>;
   selectedItems: Array<Document | Folder>;
   setSelectedItems: Dispatch<SetStateAction<Array<Document | Folder>>>;
   selectItemToggle: (
@@ -94,7 +94,7 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [trashData, setTrashData] = useState<ContentType | null>(null);
 
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState<any | null>(null);
 
   const [storageState, setStorageState] = useState<Storage | null>(null);
 
@@ -159,7 +159,10 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await createFolder(name, folder ? folder.id : null);
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
+      setToastMsg({
+        title: "Error creating folder",
+        message: err.response.data.message,
+      });
     }
   };
 
@@ -168,7 +171,10 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await deleteFolder(folder_id);
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
+      setToastMsg({
+        title: "Error deleting folder",
+        message: err.response.data.message,
+      });
     }
   };
   const handleMoveFolder = async (
@@ -182,9 +188,11 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       );
 
     if (duplicateFolder) {
-      setToastMsg(
-        `Cannot move folder: A folder named "${folderToMove.name}" already exists in the target folder.`
-      );
+      setToastMsg({
+        title: "Cannot move folder",
+        message: `A folder named "${folderToMove.name}" already exists in the target folder.`,
+      });
+
       return;
     }
 
@@ -195,7 +203,10 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error Moving Folder: ${err.response.data.message}`);
+      setToastMsg({
+        title: "Error updating folder",
+        message: err.response.data.message
+      })
     }
   };
 
@@ -204,7 +215,10 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await updateFolder(id, undefined, new_name);
       refetchContent();
     } catch (error: any) {
-      setToastMsg(`Cannot rename Folder: ${error.response.data.message}`);
+      setToastMsg({
+        title: "Cannot rename folder",
+        message: error.response.data.message,
+      });
     }
   };
 
@@ -213,7 +227,10 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await deleteDocument(id);
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error deleting folder: ${err.response.data.message}`);
+      setToastMsg({
+        title: "Error deleting folder",
+        message: err.response.data.message
+      });
     }
   };
 
@@ -228,8 +245,10 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       );
 
     if (duplicateDocument) {
-      setToastMsg(
-        `Cannot move document: A document named "${documentToMove.title}" already exists in the target folder.`
+      setToastMsg({
+        title: "Cannot move document",
+        message: `A document named "${documentToMove.title}" already exists in the target folder.`
+      }
       );
       return;
     }
@@ -243,7 +262,10 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error moving document: ${err.response.data.message}`);
+      setToastMsg({
+        title: "Error updating document",
+        message: err.response.data.message
+      })
     }
   };
 
@@ -253,7 +275,10 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await createDocument(title, folder ? folder.id : null);
       refetchContent();
     } catch (err: any) {
-      setToastMsg(`Error creating document: ${err.response.data.message}`);
+      setToastMsg({
+        title: "Error creating document",
+        message: err.response.data.message
+      })
     }
   };
 
@@ -262,7 +287,11 @@ export const FileManagerProvider: React.FC<{ children: React.ReactNode }> = ({
       await updateDocument(id, new_title, undefined, undefined);
       refetchContent();
     } catch (error: any) {
-      setToastMsg(`Cannot rename document: ${error.response.data.message}`);
+
+      setToastMsg({
+        title: "Error renaming document",
+        message: error.response.data.message
+      })
     }
   };
 

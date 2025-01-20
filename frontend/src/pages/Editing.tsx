@@ -15,6 +15,18 @@ import ReactDOM from "react-dom";
 
 type Role = "viewer" | "editor" | "owner";
 
+
+
+const CustomToast = ({ title, message }: { title: string; message: string }) => (
+  <div>
+    <strong style={{ fontSize: "16px" }}>{title}</strong>
+    <div style={{ marginTop: "4px", fontSize: "14px", color: "#FFF" }}>
+      {message}
+    </div>
+  </div>
+);
+
+
 export default function Editing() {
   const { docId, share_token } = useParams<{
     docId: string;
@@ -24,17 +36,25 @@ export default function Editing() {
     null
   );
   const [currentDocument, setCurrentDocument] = useState<Document | null>(null);
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState<any>(null);
   const [role, setRole] = useState<Role>("viewer");
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (toastMsg) {
-      toast(toastMsg, {
-        onClose: () => setToastMsg(null),
-      });
+      if (toastMsg.title && toastMsg.message) {
+        toast(<CustomToast title={toastMsg.title} message={toastMsg.message} />, {
+          onClose: () => setToastMsg(null),
+        });
+      } else {
+        toast(toastMsg, {
+          onClose: () => setToastMsg(null),
+        });
+      }
     }
-  }, [toastMsg]);
+  }, [toastMsg, setToastMsg]);
+
+
 
   async function handleSave() {
     if (share_token) {
@@ -46,9 +66,10 @@ export default function Editing() {
         );
         setPrevDocumentState(currentDocument);
       } catch (error: any) {
-        setToastMsg(
-          `Error while saving document: ${error.response.data.message}`
-        );
+        setToastMsg({
+          title: "Error while saving document",
+          message: error.response.data.message
+        });
 
       }
     } else {
@@ -63,10 +84,10 @@ export default function Editing() {
           setPrevDocumentState(currentDocument);
         }
       } catch (err: any) {
-        console.log("Error while saving document.", err.response.data.message);
-        setToastMsg(
-          `Error while saving document: ${err.response.data.message}`
-        );
+        setToastMsg({
+          title: "Error while saving document",
+          message: err.response.data.message
+        });
       }
     }
   }
@@ -129,10 +150,6 @@ export default function Editing() {
     }
   };
 
-
-
-
-
   useEffect(() => {
     if (share_token) {
       viewSharedDocument(share_token);
@@ -158,7 +175,7 @@ export default function Editing() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme="dark"
         transition={Bounce}
         style={{ fontFamily: "monospace" }}
       />
