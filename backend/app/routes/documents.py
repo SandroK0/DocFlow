@@ -100,11 +100,7 @@ def update_document(id):
     new_title = data.get('title', document.title)
     new_folder_id = data.get('folder_id', document.folder_id)
 
-    print(new_folder_id)
-    print(new_title)
-
     # Check for duplicate document titles in the target folder
-
     duplicate_document = Document.query.filter_by(
         title=new_title,
         folder_id=new_folder_id,
