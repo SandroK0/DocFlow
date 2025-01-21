@@ -36,6 +36,5 @@ DocFlow is a feature-rich document management system built with React TypeScript
 - Frontend: React with TypeScript
 - Backend: Flask (Python)
 - Database: MySQL
-- Editor: Modified React Quill
 
 
