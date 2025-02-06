@@ -1,6 +1,6 @@
 # DocFlow
 
-A modern web application for efficient document management.
+A web application for efficient document management.
 
 ## Overview
 
