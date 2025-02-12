@@ -1,5 +1,4 @@
 import { useEffect, useRef, ReactNode } from "react";
-import styles from "../styles/ModalContWrapper.module.css";
 
 export default function ModalContWrapper({
   closeModal,
