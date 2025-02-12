@@ -1,5 +1,4 @@
 from app import db
-from sqlalchemy.dialects.mysql import MEDIUMTEXT
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
@@ -86,7 +85,7 @@ class User(db.Model):
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    content = db.Column(MEDIUMTEXT, nullable=True)
+    content = db.Column(db.Text, nullable=True)  # Changed from MEDIUMTEXT to Text
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
