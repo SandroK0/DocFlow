@@ -55,7 +55,7 @@ DocFlow is a feature-rich document management system built with React TypeScript
    docker compose up
    ```
 
-4. Access the application in your web browser at `http://localhost:5300` (or the appropriate port if you've configured it differently).
+4. Access the application in your web browser at `http://localhost:3000` (or the appropriate port if you've configured it differently).
 
 To stop the application, press `Ctrl+C` in the terminal where it's running, or run:
 
