@@ -79,10 +79,7 @@ def login():
 @jwt_required()
 def get_user_storage_info():
 
-    user, error = get_current_user()
-    if error:
-        return error
-
+    user = User.get_current_user()
     if not user:
         return jsonify({"message": "User not found"}), 404
 

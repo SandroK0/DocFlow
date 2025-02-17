@@ -1,3 +1,5 @@
+from flask import jsonify
+from flask_jwt_extended import get_jwt_identity
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -38,6 +40,14 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+    @staticmethod
+    def get_current_user():
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        if not user:
+            return None
+        return user
 
     @property
     def total_storage_used(self):
@@ -85,7 +95,8 @@ class User(db.Model):
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    content = db.Column(db.Text, nullable=True)  # Changed from MEDIUMTEXT to Text
+    # Changed from MEDIUMTEXT to Text
+    content = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -93,6 +104,16 @@ class Document(db.Model):
     folder_id = db.Column(db.Integer, db.ForeignKey(
         'folder.id'), nullable=True)  # Document belongs to a folder
     in_trash = db.Column(db.Boolean, default=False, nullable=False)
+
+    @staticmethod
+    def handle_delete_document(document):
+        sharings = SharedDocument.query.filter_by(
+            document_id=document.id
+        ).all()
+
+        for sharing in sharings:
+            db.session.delete(sharing)
+        db.session.delete(document)
 
     def __repr__(self):
         return f'<Document {self.title}>'
@@ -111,15 +132,20 @@ class Document(db.Model):
 
 class SharedDocument(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    document_id = db.Column(db.Integer, db.ForeignKey('document.id'), nullable=False)
+    document_id = db.Column(db.Integer, db.ForeignKey(
+        'document.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
                         nullable=True)  # Optional for public shares
-    share_token = db.Column(db.String(200), unique=True, nullable=False)  # Unique token per share
+    share_token = db.Column(db.String(200), unique=True,
+                            nullable=False)  # Unique token per share
     role = db.Column(db.String(10), nullable=False)  # "editor" or "viewer"
-    expiration = db.Column(db.DateTime, nullable=True)  # Expiration date for the share
+    # Expiration date for the share
+    expiration = db.Column(db.DateTime, nullable=True)
 
-    document = db.relationship('Document', backref=db.backref('permissions', lazy=True))
-    user = db.relationship('User', backref=db.backref('permissions', lazy=True))
+    document = db.relationship(
+        'Document', backref=db.backref('permissions', lazy=True))
+    user = db.relationship(
+        'User', backref=db.backref('permissions', lazy=True))
 
     def __repr__(self):
         return f'<DocumentPermission document_id={self.document_id}, user_id={self.user_id}, role={self.role}>'
@@ -139,6 +165,15 @@ class Folder(db.Model):
     documents = db.relationship('Document', backref='folder', lazy=True)
 
     in_trash = db.Column(db.Boolean, default=False, nullable=False)
+
+    @staticmethod
+    def delete_nested_folders(folder):
+        """Recursively delete all nested folders and documents."""
+        for document in folder.documents:
+            Document.handle_delete_document(document)
+        for subfolder in folder.children:
+            Folder.delete_nested_folders(subfolder)
+        db.session.delete(folder)
 
     @property
     def is_empty(self):

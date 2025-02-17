@@ -8,23 +8,15 @@ from app.models import Document, User, SharedDocument
 documents_bp = Blueprint('documents', __name__)
 
 
-def get_current_user():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(int(current_user_id))
-    if not user:
-        return None, jsonify({"message": "User not found"}), 404
-    return user, None
 
 # Create a new document route
-
-
 @documents_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_document():
-    user, error = get_current_user()
-    if error:
-        return error
-
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
     data = request.get_json()
 
     # Check if the required fields are in the request data
@@ -64,9 +56,9 @@ def create_document():
 @documents_bp.route('/<int:id>', methods=['GET'])
 @jwt_required()
 def get_document(id):
-    user, error = get_current_user()
-    if error:
-        return error
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
 
     document = Document.query.get(id)
 
@@ -84,9 +76,9 @@ def get_document(id):
 @documents_bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_document(id):
-    user, error = get_current_user()
-    if error:
-        return error
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
 
     document = Document.query.get(id)
     if not document:
@@ -128,9 +120,9 @@ def update_document(id):
 @documents_bp.route("/<int:id>", methods=["DELETE"])
 @jwt_required()
 def delete_document(id):
-    user, error = get_current_user()
-    if error:
-        return error
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
 
     document = Document.query.get(id)
     if not document:
@@ -148,9 +140,9 @@ def delete_document(id):
 @documents_bp.route("/share/<int:id>", methods=["POST"])
 @jwt_required()
 def share_document(id):
-    user, error = get_current_user()
-    if error:
-        return error
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
 
     data = request.get_json()
     role = data.get("role")

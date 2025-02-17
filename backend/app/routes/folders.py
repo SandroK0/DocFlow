@@ -8,20 +8,14 @@ from app.models import Document, User
 folders_bp = Blueprint('folders', __name__)
 
 
-def get_current_user():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(int(current_user_id))
-    if not user:
-        return None, jsonify({"message": "User not found"}), 404
-    return user, None
 
 
 @folders_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_folder():
-    user, error = get_current_user()
-    if error:
-        return error
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
 
     # Get folder data from request
     data = request.get_json()
@@ -73,9 +67,9 @@ def create_folder():
 @folders_bp.route('/<int:folder_id>', methods=['GET'])
 @jwt_required()
 def get_folder(folder_id=None):
-    user, error = get_current_user()
-    if error:
-        return error
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
 
     if folder_id is None:
         # Fetch root-level folders and documents
@@ -106,9 +100,10 @@ def get_folder(folder_id=None):
 @folders_bp.route('/<int:folder_id>', methods=['DELETE'])
 @jwt_required()
 def delete_folder(folder_id):
-    user, error = get_current_user()
-    if error:
-        return error
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
 
     folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
 
@@ -126,9 +121,9 @@ def delete_folder(folder_id):
 @folders_bp.route('/<int:folder_id>', methods=['PUT'])
 @jwt_required()
 def update_folder(folder_id):
-    user, error = get_current_user()
-    if error:
-        return error
+    user = User.get_current_user()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
 
     folder = Folder.query.filter_by(id=folder_id, user_id=user.id).first()
     if not folder:
