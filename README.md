@@ -6,6 +6,12 @@ A web application for efficient document management.
 
 DocFlow is a feature-rich document management system built with React TypeScript and Flask, providing an intuitive interface for organizing and editing text documents.
 
+## Tech Stack
+
+- Frontend: React with TypeScript
+- Backend: Flask (Python)
+- Database: SQLite
+
 ## Key Features
 
 ### Advanced File Management
@@ -75,8 +81,3 @@ docker compose down
 
 <img src="./screenshots/Editor.png" alt="DocFlow Document Editor featuring rich text formatting tools and collaborative editing" />
 
-## Tech Stack
-
-- Frontend: React with TypeScript
-- Backend: Flask (Python)
-- Database: MySQL
